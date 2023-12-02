@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="icon" type="image/x-icon" href="favicon.ico">
+        <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+        <script>
+            L_NO_TOUCH = false;
+            L_DISABLE_3D = false;
+        </script>
+        <style>html, body {width: 100%;height: 100%;margin: 0;padding: 0;}</style>
+        <style>#map {position:absolute;top:0;bottom:0;right:0;left:0;}</style>
+
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css"/>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"/>
+        <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css"/>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.0/css/all.min.css"/>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css"/>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/python-visualization/folium/folium/templates/leaflet.awesome.rotate.min.css"/>
+
+        <script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet.js"></script>
+        <script src="https://unpkg.com/georaster"></script>
+        <script src="https://unpkg.com/georaster-layer-for-leaflet" type="module"></script>
+        // <script src="http://0.0.0.0:44000/coord-projection.js" type="module"></script>
+        // <link rel="stylesheet" href="http://0.0.0.0:44000/coord-projection.css"/>
+
+        <meta name="viewport" content="width=device-width,
+            initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+        <style>
+            #map {
+                position: relative;
+                width: 100.0%;
+                height: 100.0%;
+                left: 0.0%;
+                top: 0.0%;
+            }
+            .leaflet-container { font-size: 1rem; }
+        </style>
+            
+    </head>
+    <body>
+    <div class="folium-map" id="map" ></div>
+    <script>
+        // create the map with leaflets : this works 
+        var map = L.map(
+            "map",
+            {
+                center: [41.355946, 14.370868],
+                zoom: 16,
+                zoomControl: true,
+                preferCanvas: false,
+            }
+        );
+
+        // add the layer to the map object
+        var tile_layer = L.tileLayer(
+        "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+        {"attribution": "Mixed by Erry",
+         "detectRetina": false,
+         "maxNativeZoom": 20,
+         "maxZoom": 21,
+         "minZoom": 0,
+         "noWrap": false,
+         "opacity": 1,
+         "subdomains": "abc",
+         "tms": false}
+          );
+
+        tile_layer.addTo(map);
+
+        //////////////////////////////////////////////////////////////////
+
+        var layer; // Declare the layer variable outside the function
+
+        // Async request based on current viewport
+        async function loadGeoRaster() {
+          var url_to_geotiff_file = "http://0.0.0.0:44000/COG_EPSG4326.tif";
+          var georaster = await parseGeoraster(url_to_geotiff_file);
+          // console.log("georaster:", georaster);
+          var layer = new GeoRasterLayer({
+              debugLevel: 0,
+              georaster,
+              resolution: 256,
+              opacity: 0.75
+          });
+         layer.addTo(map);
+        }
+        loadGeoRaster();
+        console.log("layer: ",layer)
+
+        // old way from example
+          // parseGeoraster(url_to_geotiff_file).then(function (georaster) {
+          //   console.log("georaster:", georaster);
+          //   const layer = new GeoRasterLayer({
+          //     debugLevel: 1,
+          //     georaster,
+          //     resolution: 256,
+          //     opacity: 0.75
+          //   });
+          //   layer.addTo(map);
+          // });
+
+        var layer_control_layers = {
+            'base_layers' : { "openstreetmap" : tile_layer},
+            'overlays'    : {         "layer" :     layer },
+            };
+        let layer_control = L.control.layers( 
+            layer_control_layers.base_layers,
+            null,
+            // layer_control_layers.overlays, // this doesn't wokr, maybe because layer is define in an async?
+            {"autoZIndex": true, "collapsed": false }
+        ).addTo(map);
+        new L.Draggable(layer_control.getContainer()).enable();
+
+// from https://github.com/edihasaj/leaflet-coord-projection/tree/master
+// let coordP = L.control.coordProjection({ crs: L.CRS.EPSG4326 }).addTo(map);
+
+
+// // Working on an opacity slider 
+// // Create a slider to adjust layer opacity
+// var opacitySlider = L.control({ position: 'topright' });
+//
+// opacitySlider.onAdd = function (map) {
+//   var div = L.DomUtil.create('div', 'opacity-slider');
+//   div.innerHTML = '<input type="range" min="0" max="1" step="0.1" value="1" />';
+//   L.DomEvent.disableClickPropagation(div);
+//   return div;
+// };
+//
+// opacitySlider.addTo(map);
+//
+// // Update layer opacity when the slider value changes
+// opacitySlider.on('input', function (e) {
+//   var opacity = e.target.value;
+//   layer.setOpacity(opacity);
+// });
+//
+// // Update layer opacity when the control layer is selected or deselected
+// controlLayers.on('overlayadd overlayremove', function (e) {
+//   var opacity = e.type === 'overlayadd' ? 1 : 0;
+//   layer.setOpacity(opacity);
+// });
+//
+// // Place the opacity slider near each element in the control
+// var controlContainer = document.getElementsByClassName('leaflet-control-layers-list')[0];
+// var opacitySliderContainer = opacitySlider.getContainer();
+// controlContainer.appendChild(opacitySliderContainer);
+
+    </script>
+    </body>
+</html>
