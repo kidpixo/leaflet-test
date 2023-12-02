@@ -20,8 +20,8 @@
         <script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet.js"></script>
         <script src="https://unpkg.com/georaster"></script>
         <script src="https://unpkg.com/georaster-layer-for-leaflet" type="module"></script>
-        // <script src="http://0.0.0.0:44000/coord-projection.js" type="module"></script>
-        // <link rel="stylesheet" href="http://0.0.0.0:44000/coord-projection.css"/>
+        <!-- <script src="http://localhost:44000/coord-projection.js" type="module"></script> -->
+        <!-- <link rel="stylesheet" href="http://localhost:44000/coord-projection.css"/> -->
 
         <meta name="viewport" content="width=device-width,
             initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
@@ -35,12 +35,12 @@
             }
             .leaflet-container { font-size: 1rem; }
         </style>
-            
+
     </head>
     <body>
     <div class="folium-map" id="map" ></div>
     <script>
-        // create the map with leaflets : this works 
+        // create the map with leaflets : this works
         var map = L.map(
             "map",
             {
@@ -73,16 +73,26 @@
 
         // Async request based on current viewport
         async function loadGeoRaster() {
-          var url_to_geotiff_file = "http://0.0.0.0:44000/COG_EPSG4326.tif";
+          var url_to_geotiff_file = "http://localhost:44000/COG_EPSG4326.tif";
           var georaster = await parseGeoraster(url_to_geotiff_file);
           // console.log("georaster:", georaster);
-          var layer = new GeoRasterLayer({
+          layer = new GeoRasterLayer({
               debugLevel: 0,
               georaster,
               resolution: 256,
               opacity: 0.75
           });
-         layer.addTo(map);
+          layer.addTo(map);
+          var layer_control_layers = {
+            'base_layers' : { "openstreetmap" : tile_layer},
+            'overlays'    : {         "layer" :     layer },
+          };
+          let layer_control = L.control.layers(
+              layer_control_layers.base_layers,
+              layer_control_layers.overlays,
+              {"autoZIndex": true, "collapsed": false }
+              ).addTo(map);
+            new L.Draggable(layer_control.getContainer()).enable();          console.log("added layers")
         }
         loadGeoRaster();
         console.log("layer: ",layer)
@@ -99,23 +109,11 @@
           //   layer.addTo(map);
           // });
 
-        var layer_control_layers = {
-            'base_layers' : { "openstreetmap" : tile_layer},
-            'overlays'    : {         "layer" :     layer },
-            };
-        let layer_control = L.control.layers( 
-            layer_control_layers.base_layers,
-            null,
-            // layer_control_layers.overlays, // this doesn't wokr, maybe because layer is define in an async?
-            {"autoZIndex": true, "collapsed": false }
-        ).addTo(map);
-        new L.Draggable(layer_control.getContainer()).enable();
-
 // from https://github.com/edihasaj/leaflet-coord-projection/tree/master
 // let coordP = L.control.coordProjection({ crs: L.CRS.EPSG4326 }).addTo(map);
 
 
-// // Working on an opacity slider 
+// // Working on an opacity slider
 // // Create a slider to adjust layer opacity
 // var opacitySlider = L.control({ position: 'topright' });
 //
