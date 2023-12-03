@@ -8,5 +8,5 @@ Questo é un modo per mostrare questo lavoro e avere aiuto.
 
 Il lavoro é disponibile a cooperazioni, contattatemi a kidpixo [at] gmail.com o cercatemi su qualsiasi piattaforma come kidpixo.
 
-Le mappe sno state prese dal libro "Il cotonificio Egg di Piedimonte d'Alife" del Gruppo Memorie Storiche di Piedimonte Matese.
+Le mappe storiche sono state prese dal libro "Il cotonificio Egg di Piedimonte d'Alife" del Gruppo Memorie Storiche di Piedimonte Matese. Gli autori dei rispettivi capitoli conservano tutti i diritti.
 
