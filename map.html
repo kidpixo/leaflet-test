@@ -76,7 +76,7 @@
 
         // Async request based on current viewport
         async function loadGeoRaster() {
-          var url_to_geotiff_file = "http://localhost:44000/COG_EPSG4326.tif";
+          var url_to_geotiff_file = "COG_EPSG4326.tif";
           var georaster = await parseGeoraster(url_to_geotiff_file);
           // console.log("georaster:", georaster);
           layer = new GeoRasterLayer({
