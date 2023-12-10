@@ -20,8 +20,8 @@ var tile_layer = L.tileLayer(
     {
         attribution: "Mixed by Kidpixo",
         detectRetina: false,
-        maxNativeZoom: 20,
-        maxZoom: 21,
+        maxNativeZoom: 19,
+        maxZoom: 19,
         minZoom: 0,
         noWrap: false,
         opacity: 1,
@@ -35,8 +35,10 @@ tile_layer.addTo(map);
 
 // Now, introducing the Bing Photo Layer - because regular maps are so last season
 // P.S. Don't forget to insert your api key - https://www.bingmapsportal.com/
-var bingLayer = new L.TileLayer.Bing('-- INSERT YOUR KEY HERE --', {
-    type: 'Aerial', // You can change the type to 'AerialWithLabels' or 'Road'
+var bingLayer = new L.TileLayer.Bing('Ai2nLg63EqcX4-3ZTWHmKNQbUkcsnEYuVJGlD8V0GC83idoO0u8cu7AzD-UOz5KV', {
+    type: 'AerialWithLabels', // You can change the type to 'AerialWithLabels' or 'Road'
+    maxNativeZoom: 18,
+    maxZoom: 19,
 });
 
 // Adding the Bing Photo Layer to our map

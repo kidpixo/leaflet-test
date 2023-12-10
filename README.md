@@ -8,10 +8,11 @@ I want to use a particular type of GeoTiff image called COG defined [as](https:/
 
 ## Roadmap 
 
-- [x] Leafeat maps with a COG layer via [GeoTIFF/georaster-layer-for-leaflet](https://github.com/GeoTIFF/georaster-layer-for-leaflet/)
-- [x] add layers to control panel
-- [ ] add an opacity slider to the controls
-- [ ] add bing photo layer: hot to hide the API Key?
+- [x] Leafeat maps with a COG layer via [GeoTIFF/georaster-layer-for-leaflet](https://github.com/GeoTIFF/georaster-layer-for-leaflet/)  (thanks [anddam (anddam)](https://github.com/anddam))
+- [x] add layers to control panel  (thanks [well-it-wasnt-me (Antonio)](https://github.com/well-it-wasnt-me))
+- [x] add an opacity slider to the controls (thanks [well-it-wasnt-me (Antonio)](https://github.com/well-it-wasnt-me)) 
+- [x] add bing photo layer: hot to hide the API Key?
+- [ ] fix bing layer disappearing at zoom 19
 
 ## Run it - simple way 
 
