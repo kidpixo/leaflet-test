@@ -1,96 +1,95 @@
-// Without any import, parseGeoraster and GeoRasterLayer are not defined.
-//
-// // if I use this error : Uncaught SyntaxError: import declarations may only appear at top level of a module
-// import { parse_georaster } from "georaster.bundle.min.js";
-// import { GeoRasterLayer } from "georaster-layer-for-leaflet.js";
+// myscript.js
+// Updated by well-it-wasnt-me
+// 10/12/2023
 
-// // this works only for NPM I believe???  
-// var parse_georaster = require("georaster");
-// var GeoRasterLayer  = require("georaster-layer-for-leaflet");
+// Welcome to the brain of this operation - myscript.js
+// Grab a drink, sit back, and let's make some map magic happen
 
+// "I believe that if life gives you lemons, you should make lemonade... And try to find somebody whose life has given them vodka, and have a party!" - Ron White
 
-// create the map with leaflets : this works 
-var map_8b18675d1207ba7ec9b46561683fae53 = L.map(
-    "map_8b18675d1207ba7ec9b46561683fae53",
+var map = L.map("map", {
+    center: [41.355946, 14.370868],
+    zoom: 16,
+    zoomControl: true,
+    preferCanvas: false,
+});
+
+// Let's lay down the base map, the canvas where our map artwork will unfold
+var tile_layer = L.tileLayer(
+    "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
     {
-        center: [41.355946, 14.370868],
-        crs: L.CRS.EPSG3857,
-        zoom: 17,
-        zoomControl: true,
-        preferCanvas: false,
+        attribution: "Mixed by Kidpixo",
+        detectRetina: false,
+        maxNativeZoom: 20,
+        maxZoom: 21,
+        minZoom: 0,
+        noWrap: false,
+        opacity: 1,
+        subdomains: "abc",
+        tms: false,
     }
 );
 
-// add the layer to the map object
-var tile_layer_8f7a0b775b1d116030f3be04b513e763 = L.tileLayer(
-    "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-    {"attribution": "Data by Peppe.",
-     "detectRetina": false,
-     "maxNativeZoom": 18,
-     "maxZoom": 18,
-     "minZoom": 0,
-     "noWrap": false,
-     "opacity": 1,
-     "subdomains": "abc",
-     "tms": false}
-        );
+// Drop it like it's hot on our map
+tile_layer.addTo(map);
 
-tile_layer_8f7a0b775b1d116030f3be04b513e763.addTo(map_8b18675d1207ba7ec9b46561683fae53);
+// Now, introducing the Bing Photo Layer - because regular maps are so last season
+// P.S. Don't forget to insert your api key - https://www.bingmapsportal.com/
+var bingLayer = new L.TileLayer.Bing('-- INSERT YOUR KEY HERE --', {
+    type: 'Aerial', // You can change the type to 'AerialWithLabels' or 'Road'
+});
 
-//////////////////////////////////////////////////////////////////
-// add a GeoRasterLayer : not working
-var url_to_geotiff_file = "http://0.0.0.0:44000/COG_4326.tif";
-      parseGeoraster(url_to_geotiff_file).then(function (georaster) {
-        console.log("georaster:", georaster);
-        const layer = new GeoRasterLayer({
-          debugLevel: 0,
-          georaster,
-          resolution: 512
+// Adding the Bing Photo Layer to our map
+bingLayer.addTo(map);
+
+var geoRasterLayer;
+
+async function loadGeoRaster() {
+    var url_to_geotiff_file = "https://kidpixo.github.io/leaflet-test/COG_EPSG4326.tif";
+    var georaster = await parseGeoraster(url_to_geotiff_file);
+
+    geoRasterLayer = new GeoRasterLayer({
+        debugLevel: 0,
+        georaster,
+        resolution: 256,
+        opacity: 0.75,
+    }).addTo(map);
+
+    var opacitySliderGeoRaster = L.control({ position: 'topright' });
+
+    opacitySliderGeoRaster.onAdd = function () {
+        var div = L.DomUtil.create('div', 'leaflet-control-opacity-slider');
+        div.innerHTML = '<label for="opacity-slider-geo-raster">GeoRaster Opacity:</label><input type="range" id="opacity-slider-geo-raster" min="0" max="1" step="0.1" value="0.75" />';
+        L.DomEvent.disableClickPropagation(div);
+
+        var opacityInput = div.querySelector('#opacity-slider-geo-raster');
+        opacityInput.addEventListener('input', function (e) {
+            var opacity = e.target.value;
+            geoRasterLayer.setOpacity(opacity);
         });
-        layer.addTo(map_8b18675d1207ba7ec9b46561683fae53);
-      });
-  // parse_georaster(url_to_geotiff_file).then(function (georaster) {
-  //   const { noDataValue } = georaster;
-  //   var pixelValuesToColorFn = function (values) {
-  //     if (
-  //       values.some(function (value) {
-  //         return value === noDataValue;
-  //       })
-  //     ) {
-  //       return "rgba(0,0,0,0.0)";
-  //     } else {
-  //       const [r, g, b] = values;
-  //       return `rgba(${r},${g},${b},.85)`;
-  //     }
-  //   };
-  //   const resolution = 64;
-  //   var layer = new GeoRasterLayer({
-  //     debugLevel: 4,
-  //     attribution: "Planet",
-  //     georaster: georaster,
-  //     pixelValuesToColorFn: pixelValuesToColorFn,
-  //     resolution: resolution
-  //   });
-  //   layer.addTo(map_8b18675d1207ba7ec9b46561683fae53);
-  //
-  //   setTimeout(() => {
-  //     map_8b18675d1207ba7ec9b46561683fae53.flyToBounds(layer.getBounds());
-  //   }, 1000);
-  // });
-//////////////////////////////////////////////////////////////////
 
-// add the layers to the controls 
-var layer_control_fc1b6c5d49c008275fba3cde6f4d87fe_layers = {
-    base_layers : {
-        "openstreetmap" : tile_layer_8f7a0b775b1d116030f3be04b513e763,
-    },
-    overlays :  {
-        // "layer" : layer, // this should be the layer loaded via GeoRasterLayer
-    },
-};
-let layer_control_fc1b6c5d49c008275fba3cde6f4d87fe = L.control.layers(
-    layer_control_fc1b6c5d49c008275fba3cde6f4d87fe_layers.base_layers,
-    layer_control_fc1b6c5d49c008275fba3cde6f4d87fe_layers.overlays,
-    {"autoZIndex": true, "collapsed": false, "position": "topright"}
-).addTo(map_8b18675d1207ba7ec9b46561683fae53);
-new L.Draggable(layer_control_fc1b6c5d49c008275fba3cde6f4d87fe.getContainer()).enable();
+        return div;
+    };
+
+    opacitySliderGeoRaster.addTo(map);
+
+    // Create an opacity slider for the Bing layer
+    var opacitySliderBingLayer = L.control({ position: 'topright' });
+
+    opacitySliderBingLayer.onAdd = function () {
+        var div = L.DomUtil.create('div', 'leaflet-control-opacity-slider');
+        div.innerHTML = '<label for="opacity-slider-bing-layer">Bing Opacity:</label><input type="range" id="opacity-slider-bing-layer" min="0" max="1" step="0.1" value="0.5" />';
+        L.DomEvent.disableClickPropagation(div);
+
+        div.querySelector('#opacity-slider-bing-layer').addEventListener('input', function (e) {
+            var opacity = e.target.value;
+            bingLayer.setOpacity(opacity);
+        });
+
+        return div;
+    };
+
+    opacitySliderBingLayer.addTo(map);
+}
+
+loadGeoRaster();
