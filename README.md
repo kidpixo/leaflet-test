@@ -11,8 +11,14 @@ I want to use a particular type of GeoTiff image called COG defined [as](https:/
 - [x] Leafeat maps with a COG layer via [GeoTIFF/georaster-layer-for-leaflet](https://github.com/GeoTIFF/georaster-layer-for-leaflet/)  (thanks [anddam (anddam)](https://github.com/anddam))
 - [x] add layers to control panel  (thanks [well-it-wasnt-me (Antonio)](https://github.com/well-it-wasnt-me))
 - [x] add an opacity slider to the controls (thanks [well-it-wasnt-me (Antonio)](https://github.com/well-it-wasnt-me)) 
-- [x] add bing photo layer: hot to hide the API Key?
+- [x] add bing photo layer: hot to hide the API Key? Just leave it there.
 - [ ] fix bing layer disappearing at zoom 19
+- [x] add plugin [leaflet-locatecontrol](https://github.com/domoritz/leaflet-locatecontrol)  to geolocate the user. This works only under https, general browsers security.
+- [x] Add second COG layer
+- [x] Add all control in an unique L.control.layers and use custom text as title to insert input range + define listener for them to set opacity.
+- [ ] Add some example markers from known old pictures
+    - [ ] add their Field of View: a rough estimation of the field, a triangle Polygon?  
+
 
 ## Run it - simple way 
 

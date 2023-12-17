@@ -14,6 +14,9 @@ var map = L.map("map", {
     preferCanvas: false,
 });
 
+// add plugin leaflet-locatecontrol: A leaflet control to geolocate the user https://github.com/domoritz/leaflet-locatecontrol
+L.control.locate().addTo(map);
+
 // Let's lay down the base map, the canvas where our map artwork will unfold
 var tile_layer = L.tileLayer(
     "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
@@ -21,7 +24,7 @@ var tile_layer = L.tileLayer(
         attribution: "Mixed by Kidpixo",
         detectRetina: false,
         maxNativeZoom: 19,
-        maxZoom: 19,
+        maxZoom: 20,
         minZoom: 0,
         noWrap: false,
         opacity: 1,
@@ -29,7 +32,6 @@ var tile_layer = L.tileLayer(
         tms: false,
     }
 );
-
 // Drop it like it's hot on our map
 tile_layer.addTo(map);
 
@@ -38,60 +40,76 @@ tile_layer.addTo(map);
 var bingLayer = new L.TileLayer.Bing('Ai2nLg63EqcX4-3ZTWHmKNQbUkcsnEYuVJGlD8V0GC83idoO0u8cu7AzD-UOz5KV', {
     type: 'AerialWithLabels', // You can change the type to 'AerialWithLabels' or 'Road'
     maxNativeZoom: 18,
-    maxZoom: 19,
+    maxZoom: 20,
 });
-
+// // opacity in creation is not working!
+// bingLayer.setOpacity(0.4);
 // Adding the Bing Photo Layer to our map
 bingLayer.addTo(map);
 
 var geoRasterLayer;
+var geoRasterLayer_2;
 
 async function loadGeoRaster() {
-    var url_to_geotiff_file = "https://kidpixo.github.io/leaflet-test/COG_EPSG4326.tif";
-    var georaster = await parseGeoraster(url_to_geotiff_file);
+    // add first georaster
+    var url_to_geotiff_file = "https://kidpixo.github.io/leaflet-test/COG_1884_EPSG4326.tif";
+    // var url_to_geotiff_file = "http://0.0.0.0:44000/COG_1884_EPSG4326.tif";
+    var georaster = await parseGeoraster(url_to_geotiff_file, {'resampleMethod':'nearest'});
 
     geoRasterLayer = new GeoRasterLayer({
         debugLevel: 0,
-        georaster,
+        georaster:georaster,
         resolution: 256,
         opacity: 0.75,
     }).addTo(map);
 
-    var opacitySliderGeoRaster = L.control({ position: 'topright' });
+ 
+    // add second georaster
+    var url_to_geotiff_file_2 = "https://kidpixo.github.io/leaflet-test/COG_1964_EPSG4326.tif";
+    // var url_to_geotiff_file_2 = "http://0.0.0.0:44000/COG_1964_EPSG4326.tif";
+    var georaster_2 = await parseGeoraster(url_to_geotiff_file_2, {'resampleMethod':'nearest'});
 
-    opacitySliderGeoRaster.onAdd = function () {
-        var div = L.DomUtil.create('div', 'leaflet-control-opacity-slider');
-        div.innerHTML = '<label for="opacity-slider-geo-raster">GeoRaster Opacity:</label><input type="range" id="opacity-slider-geo-raster" min="0" max="1" step="0.1" value="0.75" />';
-        L.DomEvent.disableClickPropagation(div);
+    geoRasterLayer_2 = new GeoRasterLayer({
+        debugLevel: 0,
+        georaster:georaster_2,
+        resolution: 256,
+        opacity: 0.75,
+    }).addTo(map);
 
-        var opacityInput = div.querySelector('#opacity-slider-geo-raster');
-        opacityInput.addEventListener('input', function (e) {
-            var opacity = e.target.value;
-            geoRasterLayer.setOpacity(opacity);
-        });
-
-        return div;
+    // build layers group
+    // basemaps
+    var baseMaps = {
+        "OpenStreetMap": tile_layer,
+        // "Bing": bingLayer
     };
-
-    opacitySliderGeoRaster.addTo(map);
-
-    // Create an opacity slider for the Bing layer
-    var opacitySliderBingLayer = L.control({ position: 'topright' });
-
-    opacitySliderBingLayer.onAdd = function () {
-        var div = L.DomUtil.create('div', 'leaflet-control-opacity-slider');
-        div.innerHTML = '<label for="opacity-slider-bing-layer">Bing Opacity:</label><input type="range" id="opacity-slider-bing-layer" min="0" max="1" step="0.1" value="0.5" />';
-        L.DomEvent.disableClickPropagation(div);
-
-        div.querySelector('#opacity-slider-bing-layer').addEventListener('input', function (e) {
-            var opacity = e.target.value;
-            bingLayer.setOpacity(opacity);
-        });
-
-        return div;
+    // overlays, insert input range as title with ad-hoc IDs
+    var overlayMaps = {
+        'bing<input type="range" id="opacity-slider-bing" min="0" max="1" step="0.1" value="0.4" />': bingLayer,
+        '1884<input type="range" id="opacity-slider-1884" min="0" max="1" step="0.1" value="0.4" />': geoRasterLayer,
+        '1964<input type="range" id="opacity-slider-1964" min="0" max="1" step="0.1" value="0.4" />': geoRasterLayer_2,
     };
+    // create global control
+    var layerControl = L.control.layers(baseMaps, 
+        overlayMaps,
+        {"autoZIndex": true, "collapsed": false, "position": "topright"}
+    ).addTo(map);
 
-    opacitySliderBingLayer.addTo(map);
+    // create listener for opacity input
+    // opacity for 1884 layer : geoRasterLayer
+    document.querySelector('#opacity-slider-1884').addEventListener('input', function (e) {
+        var opacity = e.target.value;
+        geoRasterLayer.setOpacity(opacity);
+    });
+    // opacity for 1964 layer : geoRasterLayer_2
+    document.querySelector('#opacity-slider-1964').addEventListener('input', function (e) {
+        var opacity = e.target.value;
+        geoRasterLayer_2.setOpacity(opacity);
+    });
+    // opacity for Bing layer
+    document.querySelector('#opacity-slider-bing').addEventListener('input', function (e) {
+        var opacity = e.target.value;
+        bingLayer.setOpacity(opacity);
+    });
 }
 
 loadGeoRaster();
