@@ -12,10 +12,14 @@ I want to use a particular type of GeoTiff image called COG defined [as](https:/
 - [x] add layers to control panel  (thanks [well-it-wasnt-me (Antonio)](https://github.com/well-it-wasnt-me))
 - [x] add an opacity slider to the controls (thanks [well-it-wasnt-me (Antonio)](https://github.com/well-it-wasnt-me)) 
 - [x] add bing photo layer: hot to hide the API Key? Just leave it there.
-- [ ] fix bing layer disappearing at zoom 19
+- [x] fix bing layer disappearing at zoom 19: this is a bug in digidem/leaflet-bing-layer ([#8](https://github.com/digidem/leaflet-bing-layer/issues/8)). Manually add those options after layer creation.
 - [x] add plugin [leaflet-locatecontrol](https://github.com/domoritz/leaflet-locatecontrol)  to geolocate the user. This works only under https, general browsers security.
 - [x] Add second COG layer
 - [x] Add all control in an unique L.control.layers and use custom text as title to insert input range + define listener for them to set opacity.
+- [ ] Add an option to identify the layers 
+    - [x] Manually add map._layers[X].options.layer_id
+    - [x] Implement functions to filters layers based on layer_id and lsit all IDs. 
+    - [ ] Functions don't work inside promise async `loadGeoRaster`, why? 
 - [ ] Add some example markers from known old pictures
     - [ ] add their Field of View: a rough estimation of the field, a triangle Polygon?  
 

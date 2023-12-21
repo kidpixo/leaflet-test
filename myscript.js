@@ -25,7 +25,11 @@ var tile_layer = L.tileLayer(
         detectRetina: false,
         maxNativeZoom: 19,
         maxZoom: 20,
+<<<<<<< HEAD
         minZoom: 0,
+=======
+        minZoom: 2,
+>>>>>>> 655728c (improvement: fixed disapperaing Bing layer at maxZoom, started identify layers in map._layers)
         noWrap: false,
         opacity: 1,
         subdomains: "abc",
@@ -34,6 +38,7 @@ var tile_layer = L.tileLayer(
 );
 // Drop it like it's hot on our map
 tile_layer.addTo(map);
+tile_layer.options['layer_id']='osm'
 
 // Now, introducing the Bing Photo Layer - because regular maps are so last season
 // P.S. Don't forget to insert your api key - https://www.bingmapsportal.com/
@@ -42,10 +47,19 @@ var bingLayer = new L.TileLayer.Bing('Ai2nLg63EqcX4-3ZTWHmKNQbUkcsnEYuVJGlD8V0GC
     maxNativeZoom: 18,
     maxZoom: 20,
 });
+<<<<<<< HEAD
 // // opacity in creation is not working!
 // bingLayer.setOpacity(0.4);
+=======
+>>>>>>> 655728c (improvement: fixed disapperaing Bing layer at maxZoom, started identify layers in map._layers)
 // Adding the Bing Photo Layer to our map
 bingLayer.addTo(map);
+// digidem/leaflet-bing-layer bug: options are ignored
+// opacity in creation is not working!
+bingLayer.setOpacity(0.4);
+bingLayer.options['maxNativeZoom']=18
+bingLayer.options['maxZoom']=map.getMaxZoom()
+bingLayer.options['layer_id']='bing'
 
 var geoRasterLayer;
 var geoRasterLayer_2;
@@ -60,9 +74,16 @@ async function loadGeoRaster() {
         debugLevel: 0,
         georaster:georaster,
         resolution: 256,
-        opacity: 0.75,
+        opacity: 0.7,
     }).addTo(map);
+    geoRasterLayer.options['layer_id']='1884'
+ 
+    // add second georaster
+    var url_to_geotiff_file_2 = "https://kidpixo.github.io/leaflet-test/COG_1964_EPSG4326.tif";
+    // var url_to_geotiff_file_2 = "http://0.0.0.0:44000/COG_1964_EPSG4326.tif";
+    var georaster_2 = await parseGeoraster(url_to_geotiff_file_2, {'resampleMethod':'nearest'});
 
+<<<<<<< HEAD
  
     // add second georaster
     var url_to_geotiff_file_2 = "https://kidpixo.github.io/leaflet-test/COG_1964_EPSG4326.tif";
@@ -76,6 +97,16 @@ async function loadGeoRaster() {
         opacity: 0.75,
     }).addTo(map);
 
+=======
+    geoRasterLayer_2 = new GeoRasterLayer({
+        debugLevel: 0,
+        georaster:georaster_2,
+        resolution: 256,
+        opacity: 0.7,
+    }).addTo(map);
+    geoRasterLayer_2.options['layer_id']='1964'
+
+>>>>>>> 655728c (improvement: fixed disapperaing Bing layer at maxZoom, started identify layers in map._layers)
     // build layers group
     // basemaps
     var baseMaps = {
@@ -83,10 +114,21 @@ async function loadGeoRaster() {
         // "Bing": bingLayer
     };
     // overlays, insert input range as title with ad-hoc IDs
+<<<<<<< HEAD
     var overlayMaps = {
         'bing<input type="range" id="opacity-slider-bing" min="0" max="1" step="0.1" value="0.4" />': bingLayer,
         '1884<input type="range" id="opacity-slider-1884" min="0" max="1" step="0.1" value="0.4" />': geoRasterLayer,
         '1964<input type="range" id="opacity-slider-1964" min="0" max="1" step="0.1" value="0.4" />': geoRasterLayer_2,
+=======
+    // // try to get the layer opacity
+    // var bingLayer_id ='bing<input type="range" id="opacity-slider-bing" min="0" max="1" step="0.1" value="'
+    // bingLayer_id = bingLayer_id.concat(String(filter_layer_id('bing').options.opacity), '" />')
+    // console.log( bingLayer_id );
+    var overlayMaps = {
+        'bing<input type="range" id="opacity-slider-bing" min="0" max="1" step="0.1" value="0.4" />': bingLayer,
+        '1884<input type="range" id="opacity-slider-1884" min="0" max="1" step="0.1" value="0.7" />': geoRasterLayer,
+        '1964<input type="range" id="opacity-slider-1964" min="0" max="1" step="0.1" value="0.7" />': geoRasterLayer_2,
+>>>>>>> 655728c (improvement: fixed disapperaing Bing layer at maxZoom, started identify layers in map._layers)
     };
     // create global control
     var layerControl = L.control.layers(baseMaps, 
@@ -111,5 +153,22 @@ async function loadGeoRaster() {
         bingLayer.setOpacity(opacity);
     });
 }
+
+function filter_layer_id (layer_id) {
+    for (let key in map._layers) {
+     if (map._layers[key].options.layer_id == layer_id) {
+         return map._layers[key]
+        }
+    }
+}
+
+function return_all_layer_id () {
+    for (let key in map._layers) {
+        if (map._layers[key].options.hasOwnProperty('layer_id')) {
+            console.log(key,map._layers[key].options.layer_id);
+        }
+    }
+}
+
 
 loadGeoRaster();
