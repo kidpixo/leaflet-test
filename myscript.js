@@ -140,7 +140,8 @@ async function loadGeoRaster() {
         '1884<input type="range" id="opacity-slider-1884" min="0" max="1" step="0.1" value="0.7" />' : geoRasterLayer,
         '1964<input type="range" id="opacity-slider-1964" min="0" max="1" step="0.1" value="0.7" />' : geoRasterLayer_2,
         'foto'                                                                                       : photos_origin_layer,
-    'foto fov<input type="range" id="opacity-slider-fov" min="0" max="1" step="0.1" value="0.7" />'  : photos_fov_layer,
+    'foto fov'                                                                                       : photos_fov_layer,
+    // 'foto fov<input type="range" id="opacity-slider-fov" min="0" max="1" step="0.1" value="0.7" />'  : photos_fov_layer,
     };
     // create global control
     var layerControl = L.control.layers(baseMaps, 
