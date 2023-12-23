@@ -7,7 +7,7 @@
 
 // "I believe that if life gives you lemons, you should make lemonade... And try to find somebody whose life has given them vodka, and have a party!" - Ron White
 
-const base_url = "https://kidpixo.github.io/"
+const base_url = "https://kidpixo.github.io/leaflet-test/"
 // const base_url = "http://0.0.0.0:44000/"
 
 var map = L.map("map", {
@@ -102,7 +102,7 @@ getJSON(url_fov, function(geojson_fov) {
 
 async function loadGeoRaster() {
     // add first georaster
-    var url_to_geotiff_file = base_url+"leaflet-test/COG_1884_EPSG4326.tif";
+    var url_to_geotiff_file = base_url+"COG_1884_EPSG4326.tif";
     // var url_to_geotiff_file = "http://0.0.0.0:44000/COG_1884_EPSG4326.tif";
     var georaster = await parseGeoraster(url_to_geotiff_file, {'resampleMethod':'nearest'});
 
@@ -115,7 +115,7 @@ async function loadGeoRaster() {
     geoRasterLayer.options['layer_id']='1884'
  
     // add second georaster
-    var url_to_geotiff_file_2 = base_url+"leaflet-test/COG_1964_EPSG4326.tif";
+    var url_to_geotiff_file_2 = base_url+"COG_1964_EPSG4326.tif";
     // var url_to_geotiff_file_2 = "http://0.0.0.0:44000/COG_1964_EPSG4326.tif";
     var georaster_2 = await parseGeoraster(url_to_geotiff_file_2, {'resampleMethod':'nearest'});
 
