@@ -7,6 +7,9 @@
 
 // "I believe that if life gives you lemons, you should make lemonade... And try to find somebody whose life has given them vodka, and have a party!" - Ron White
 
+const base_url = "https://kidpixo.github.io/"
+// const base_url = "http://0.0.0.0:44000/"
+
 var map = L.map("map", {
     center: [41.355946, 14.370868],
     zoom: 16,
@@ -64,7 +67,7 @@ function getJSON(url, cb) {
 }
 
 // grab the data : Photo origin points for markers
-var url_origin = 'http://0.0.0.0:44000/photos_origin.geojson';
+var url_origin = base_url+'photos_origin.geojson';
 
 getJSON(url_origin, function(geojson_origin) {
   // Do something with the result
@@ -77,7 +80,7 @@ getJSON(url_origin, function(geojson_origin) {
         // Create a popup with the text and image
         var popupContent = '<div>' +
           '<h3>' + text + '</h3>' +
-          '<img id="markers_popup_photos" src="http://0.0.0.0:44000/photos/' + filename + '" alt="' + filename + '">' +
+          '<img id="markers_popup_photos" src="'+ base_url + filename + '" alt="' + filename + '">' +
           '</div>';
         layer.bindPopup(popupContent,{maxWidth: "auto"});
       }
@@ -85,7 +88,7 @@ getJSON(url_origin, function(geojson_origin) {
 });
 
 // grab the data : Photo field of view for polygons
-var url_fov = 'http://0.0.0.0:44000/photos_fov.geojson';
+var url_fov = base_url+'photos_fov.geojson';
 var photos_fov_style = {
     "weight": 0.1,
     "fillOpacity": .5
@@ -99,7 +102,7 @@ getJSON(url_fov, function(geojson_fov) {
 
 async function loadGeoRaster() {
     // add first georaster
-    var url_to_geotiff_file = "https://kidpixo.github.io/leaflet-test/COG_1884_EPSG4326.tif";
+    var url_to_geotiff_file = base_url+"leaflet-test/COG_1884_EPSG4326.tif";
     // var url_to_geotiff_file = "http://0.0.0.0:44000/COG_1884_EPSG4326.tif";
     var georaster = await parseGeoraster(url_to_geotiff_file, {'resampleMethod':'nearest'});
 
@@ -112,7 +115,7 @@ async function loadGeoRaster() {
     geoRasterLayer.options['layer_id']='1884'
  
     // add second georaster
-    var url_to_geotiff_file_2 = "https://kidpixo.github.io/leaflet-test/COG_1964_EPSG4326.tif";
+    var url_to_geotiff_file_2 = base_url+"leaflet-test/COG_1964_EPSG4326.tif";
     // var url_to_geotiff_file_2 = "http://0.0.0.0:44000/COG_1964_EPSG4326.tif";
     var georaster_2 = await parseGeoraster(url_to_geotiff_file_2, {'resampleMethod':'nearest'});
 
