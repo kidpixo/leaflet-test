@@ -12,7 +12,7 @@ const base_url = "https://kidpixo.github.io/leaflet-test/"
 
 var map = L.map("map", {
     center: [41.355946, 14.370868],
-    zoom: 16,
+    zoom: 17,
     zoomControl: true,
     preferCanvas: false,
 });
@@ -74,13 +74,13 @@ getJSON(url_origin, function(geojson_origin) {
   console.log(geojson_origin);
   photos_origin_layer = L.geoJSON(geojson_origin, {
       onEachFeature: function(feature, layer) {
-        var text = feature.properties.text;
+        var text = feature.properties.text.replace(/['"]+/g, '');
         var filename = feature.properties.filename;
-  
         // Create a popup with the text and image
         var popupContent = '<div>' +
-          '<h3>' + text + '</h3>' +
-          '<img id="markers_popup_photos" src="'+ base_url + filename + '" alt="' + filename + '">' +
+          '<h1>' + text + '</h1>' +
+          '<img id="markers_popup_photos" src="'+ base_url + 'photos/thumbnail_'+ filename + '" alt="' + filename + '">' +
+          '(<a href="'+ base_url + 'photos/'+ filename + '">original</a>)'+
           '</div>';
         layer.bindPopup(popupContent,{maxWidth: "auto"});
       }
@@ -91,7 +91,7 @@ getJSON(url_origin, function(geojson_origin) {
 var url_fov = base_url+'photos_fov.geojson';
 var photos_fov_style = {
     "weight": 0.1,
-    "fillOpacity": .5
+    "fillOpacity": .4
 };
 getJSON(url_fov, function(geojson_fov) {
   // Do something with the result

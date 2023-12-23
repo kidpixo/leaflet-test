@@ -20,9 +20,9 @@ I want to use a particular type of GeoTiff image called COG defined [as](https:/
     - [x] Manually add map._layers[X].options.layer_id
     - [x] Implement functions to filters layers based on layer_id and lsit all IDs. 
     - [ ] Functions don't work inside promise async `loadGeoRaster`, why? 
-- [ ] Add some example markers from known old pictures
-    - [ ] add their Field of View: a rough estimation of the field, a triangle Polygon?  
-
+- [x] Add some example markers from known old pictures, reading from geojson coming from csv
+    - [x] add their Field of View: a rough estimation of the field, a triangle Polygon 
+    - [ ] link those to arjs 
 
 ## Run it - simple way 
 
