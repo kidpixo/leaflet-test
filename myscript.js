@@ -55,6 +55,48 @@ bingLayer.options['layer_id']='bing'
 var geoRasterLayer;
 var geoRasterLayer_2;
 
+
+function getJSON(url, cb) {
+  fetch(url)
+    .then(response => response.json())
+    .then(result => cb(result))
+    .catch(error => console.error(error));
+}
+
+// grab the data : Photo origin points for markers
+var url_origin = 'http://0.0.0.0:44000/photos_origin.geojson';
+
+getJSON(url_origin, function(geojson_origin) {
+  // Do something with the result
+  console.log(geojson_origin);
+  photos_origin_layer = L.geoJSON(geojson_origin, {
+      onEachFeature: function(feature, layer) {
+        var text = feature.properties.text;
+        var filename = feature.properties.filename;
+  
+        // Create a popup with the text and image
+        var popupContent = '<div>' +
+          '<h3>' + text + '</h3>' +
+          '<img id="markers_popup_photos" src="http://0.0.0.0:44000/photos/' + filename + '" alt="' + filename + '">' +
+          '</div>';
+        layer.bindPopup(popupContent,{maxWidth: "auto"});
+      }
+    }).addTo(map);
+});
+
+// grab the data : Photo field of view for polygons
+var url_fov = 'http://0.0.0.0:44000/photos_fov.geojson';
+var photos_fov_style = {
+    "weight": 0.1,
+    "fillOpacity": .5
+};
+getJSON(url_fov, function(geojson_fov) {
+  // Do something with the result
+  console.log(geojson_fov);
+  photos_fov_layer = L.geoJSON(geojson_fov, {style: photos_fov_style}).addTo(map);
+});
+
+
 async function loadGeoRaster() {
     // add first georaster
     var url_to_geotiff_file = "https://kidpixo.github.io/leaflet-test/COG_1884_EPSG4326.tif";
@@ -94,9 +136,11 @@ async function loadGeoRaster() {
     // bingLayer_id = bingLayer_id.concat(String(filter_layer_id('bing').options.opacity), '" />')
     // console.log( bingLayer_id );
     var overlayMaps = {
-        'bing<input type="range" id="opacity-slider-bing" min="0" max="1" step="0.1" value="0.4" />': bingLayer,
-        '1884<input type="range" id="opacity-slider-1884" min="0" max="1" step="0.1" value="0.7" />': geoRasterLayer,
-        '1964<input type="range" id="opacity-slider-1964" min="0" max="1" step="0.1" value="0.7" />': geoRasterLayer_2,
+        'bing<input type="range" id="opacity-slider-bing" min="0" max="1" step="0.1" value="0.4" />' : bingLayer,
+        '1884<input type="range" id="opacity-slider-1884" min="0" max="1" step="0.1" value="0.7" />' : geoRasterLayer,
+        '1964<input type="range" id="opacity-slider-1964" min="0" max="1" step="0.1" value="0.7" />' : geoRasterLayer_2,
+        'foto'                                                                                       : photos_origin_layer,
+    'foto fov<input type="range" id="opacity-slider-fov" min="0" max="1" step="0.1" value="0.7" />'  : photos_fov_layer,
     };
     // create global control
     var layerControl = L.control.layers(baseMaps, 
@@ -120,6 +164,11 @@ async function loadGeoRaster() {
         var opacity = e.target.value;
         bingLayer.setOpacity(opacity);
     });
+    // // opacity for photos_fov
+    // document.querySelector('#opacity-slider-fov').addEventListener('input', function (e) {
+    //     var opacity = e.target.value;
+    //     photos_fov_layer.setOpacity(opacity);
+    // });
 }
 
 function filter_layer_id (layer_id) {

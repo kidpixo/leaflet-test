@@ -20,3 +20,9 @@ html, body {
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Add a subtle box shadow */
     margin-bottom: 10px; /* Add some space at the bottom */
 }
+
+#markers_popup_photos {
+  max-width: 30vw;
+  max-height: 30vh;
+}
+
