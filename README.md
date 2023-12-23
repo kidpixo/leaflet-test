@@ -22,6 +22,7 @@ I want to use a particular type of GeoTiff image called COG defined [as](https:/
     - [ ] Functions don't work inside promise async `loadGeoRaster`, why? 
 - [x] Add some example markers from known old pictures, reading from geojson coming from csv
     - [x] add their Field of View: a rough estimation of the field, a triangle Polygon 
+    - [x] add opacity slider for geojson via setStyle, not the same as other layers
     - [ ] link those to arjs 
 
 ## Run it - simple way 

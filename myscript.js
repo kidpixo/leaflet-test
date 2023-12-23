@@ -90,8 +90,8 @@ getJSON(url_origin, function(geojson_origin) {
 // grab the data : Photo field of view for polygons
 var url_fov = base_url+'photos_fov.geojson';
 var photos_fov_style = {
-    "weight": 0.1,
-    "fillOpacity": .4
+    "weight": 0,
+    "fillOpacity": .3
 };
 getJSON(url_fov, function(geojson_fov) {
   // Do something with the result
@@ -143,8 +143,8 @@ async function loadGeoRaster() {
         '1884<input type="range" id="opacity-slider-1884" min="0" max="1" step="0.1" value="0.7" />' : geoRasterLayer,
         '1964<input type="range" id="opacity-slider-1964" min="0" max="1" step="0.1" value="0.7" />' : geoRasterLayer_2,
         'foto'                                                                                       : photos_origin_layer,
-    'foto fov'                                                                                       : photos_fov_layer,
-    // 'foto fov<input type="range" id="opacity-slider-fov" min="0" max="1" step="0.1" value="0.7" />'  : photos_fov_layer,
+    // 'foto fov'                                                                                       : photos_fov_layer,
+    'foto fov<input type="range" id="opacity-slider-fov" min="0" max="1" step="0.1" value="0.3" />'  : photos_fov_layer,
     };
     // create global control
     var layerControl = L.control.layers(baseMaps, 
@@ -168,12 +168,19 @@ async function loadGeoRaster() {
         var opacity = e.target.value;
         bingLayer.setOpacity(opacity);
     });
-    // // opacity for photos_fov
-    // document.querySelector('#opacity-slider-fov').addEventListener('input', function (e) {
-    //     var opacity = e.target.value;
-    //     photos_fov_layer.setOpacity(opacity);
-    // });
+    // opacity for photos_fov
+    document.querySelector('#opacity-slider-fov').addEventListener('input', function (e) {
+        var opacity = e.target.value;
+        photos_fov_layer.setStyle(new_style(opacity));
+    });
 }
+
+// see [(2) Leaflet geoJSON - function within setStyle() : gis](https://www.reddit.com/r/gis/comments/ukyip9/leaflet_geojson_function_within_setstyle/)
+const new_style = function(opacity) {
+    return {
+    "fillOpacity": opacity
+    };
+};
 
 function filter_layer_id (layer_id) {
     for (let key in map._layers) {
