@@ -1,6 +1,6 @@
 {
 "type": "FeatureCollection",
 "features": [
-{ "type": "Feature", "properties": { "filename": "ruderi_convento_carmine.jpg", "latitude_origin": 41.3548701, "longitute_origin": 14.3728472, "latitude_vertex_left": 41.3549588, "longitude_vertex_left": 14.3717214, "latitude_vertex_right": 41.3553662, "longitude_vertex_right": 14.3721102, "text": "'Comment here'" }, "geometry": { "type": "Point", "coordinates": [ 14.3728472, 41.3548701 ] } }
+{ "type": "Feature", "properties": { "filename": "ruderi_convento_carmine.jpg", "text": "'Comment here'", "x_boresight": -0.95408910302581107, "y_boresight": 0.29952292648043366 }, "geometry": { "type": "Point", "coordinates": [ 14.3728472, 41.3548701 ] } }
 ]
 }

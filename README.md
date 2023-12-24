@@ -1,5 +1,7 @@
 ## Test for Leaflet
 
+This test is hosted at gitpages here [Mappe antiche di Piedimonte | leaflet-test](https://kidpixo.github.io/leaflet-test/).
+
 I am trying to visualize some maps with Leaflets.
 
 I want to use a particular type of GeoTiff image called COG defined [as](https://www.usgs.gov/faqs/what-are-cloud-optimized-geotiffs-cogs) 
