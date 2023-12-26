@@ -1,22 +1,22 @@
-filename,latitude_origin,longitude_origin,latitude_vertex_left,longitude_vertex_left,latitude_vertex_right,longitude_vertex_right,text
-PiazzaCarmine_PanetteriaLeonetti-1956_alluvione.jpg,41.35512,14.37261,,,,,
-ViaCarmine-ponte_torano_verso_piazza_carmine_1900.jpg,,,,,,,
-video_cotonificio-anni_1920-1930-CLIP.mp4,,,,,,,
-preparativi_abbatimento-ciminiera-anni70.jpg,,,,,,,
-ponte_torano_verso_piazza_carmine_anni70.jpg,,,,,,,
-piazzacarmine_26-ottobre-1966.jpg,,,,,,,
-Piazza_Carmine_verso_Lazzari-anni70?.jpg,,,,,,,
-Piazza_Mercato_fine_1800.jpg,,,,,,,
-Piazza_Carmine-anni-1940-1950.jpg,,,,,,,
-OrologiaioCarnevale_PiazzaCarmine_fianco-BarCarletto-1900.jpg,,,,,,,
-abatttimento_ciminera_1972.jpg,,,,,,,
-Cotonifiio_Incisione.jpg,,,,,,,
-Cartolina_cotonificio.jpg,,,,,,,
-piazzacarmine_con_ciminiera.jpg,,,,,,,
-ruderi_convento_carmine.jpg,41.3548701,14.3728472,41.3549588,14.3717214,41.3553662,14.3721102,'Comment here'
-Ciminiera_cotonificio_dalla_pretura.jpg,,,,,,,
-Via_Antonio_Gaetani_cotonificio_sfondo.jpg,,,,,,,
-Cotonifiio_retro_convento.jpg,,,,,,,
-Inizio_ViaLiberta-dopoguerra.jpg,,,,,,,
-Inizio_ViaLiberta-dopoguerra-agjusted.jpg,,,,,,,
-Via_CarmineMacerie_Scale.jpg,,,,,,,
+filename,latitude_origin,longitude_origin,latitude_vertex_left,longitude_vertex_left,latitude_vertex_right,longitude_vertex_right,text,time
+PiazzaCarmine_PanetteriaLeonetti-1956_alluvione.jpg,41.35514858,14.37261771,41.35542921,14.37220630,41.35520670,14.37265949,'Comment',"1956-00-00 00:00:00+00"
+ViaCarmine-ponte_torano_verso_piazza_carmine_1900.jpg,41.35528481,14.37159419,41.35534475,14.37221629,41.35519581,14.37199924,'Comment',"1900-00-00 00:00:00+00"
+video_cotonificio-anni_1920-1930-CLIP.mp4,41.35479666,14.37255641,41.35452693,14.37244107,41.35436164,14.37196609,'Comment',"1925-00-00 00:00:00+00"
+preparativi_abbatimento-ciminiera-anni70.jpg,,,,,,,,
+ponte_torano_verso_piazza_carmine_anni70.jpg,41.35524212,14.37180035,41.35538380,14.37234753,41.35480710,14.37285429,'Comment',"1972-00-00 00:00:00+00"
+piazzacarmine_26-ottobre-1966.jpg,41.35455236,14.37280979,41.35536246,14.37210595,41.35474126,14.37291332,'Comment',"1900-00-00 00:00:00+00"
+Piazza_Carmine_verso_Lazzari-anni70?.jpg,,,,,,,,
+Piazza_Mercato_fine_1800.jpg,,,,,,,,
+Piazza_Carmine-anni-1940-1950.jpg,41.35539924,14.37222674,41.35535474,14.37226942,41.35525257,14.37213319,'Comment',"1945-00-00 00:00:00+00"
+OrologiaioCarnevale_PiazzaCarmine_fianco-BarCarletto-1900.jpg,41.35528435,14.37209687,41.35528163,14.37153470,41.35531160,14.37200968,'Comment',"1900-00-00 00:00:00+00"
+abatttimento_ciminera_1972.jpg,41.35467633,14.37197472,41.3541373,14.3722031,41.35430170,14.37165822,'Comment',"1972-00-00 00:00:00+00"
+Cotonifiio_Incisione.jpg,,,,,,,,
+Cartolina_cotonificio.jpg,,,,,,,,
+piazzacarmine_con_ciminiera.jpg,,,,,,,,
+ruderi_convento_carmine.jpg,41.3548701,14.3728472,41.3549588,14.3717214,41.3553662,14.3721102,'Comment here',"1960-00-00 00:00:00+00"
+Ciminiera_cotonificio_dalla_pretura.jpg,,,,,,,,
+Via_Antonio_Gaetani_cotonificio_sfondo.jpg,,,,,,,,
+Cotonifiio_retro_convento.jpg,,,,,,,,
+Inizio_ViaLiberta-dopoguerra.jpg,,,,,,,,
+Inizio_ViaLiberta-dopoguerra-agjusted.jpg,,,,,,,,
+Via_CarmineMacerie_Scale.jpg,,,,,,,,

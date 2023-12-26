@@ -22,7 +22,7 @@ import geopandas as gpd
 
 # %%
 photos_df = pd.read_csv('photos/Photos.csv').dropna()
-
+print(photos_df)
 # %%
 for name in ['origin','vertex_left','vertex_right'] :
     photos_df[f'{name}'] = photos_df.apply(lambda row: Point(row[f'longitude_{name}'], row[f'latitude_{name}']),axis=1)
@@ -64,7 +64,7 @@ photos_df = photos_df.drop(columns=[ 'latitude_origin', 'longitude_origin',
 # %%
 photos_geodf = gpd.GeoDataFrame(photos_df,geometry=photos_df.fov)
 photos_geodf.crs = "EPSG:4326"
-
+print(photos_geodf)
 # write output
 out_path = pathlib.Path("")
 

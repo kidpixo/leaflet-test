@@ -1,6 +1,14 @@
 {
 "type": "FeatureCollection",
 "features": [
-{ "type": "Feature", "properties": { "filename": "ruderi_convento_carmine.jpg", "text": "'Comment here'", "x_boresight": -0.95408910302581107, "y_boresight": 0.29952292648043366 }, "geometry": { "type": "Point", "coordinates": [ 14.3728472, 41.3548701 ] } }
+{ "type": "Feature", "properties": { "filename": "PiazzaCarmine_PanetteriaLeonetti-1956_alluvione.jpg", "text": "'Comment'", "time": "1956-00-00 00:00:00+00", "x_boresight": -0.12312128386836747, "y_boresight": 0.11283536214623291 }, "geometry": { "type": "Point", "coordinates": [ 14.37261771, 41.35514858 ] } },
+{ "type": "Feature", "properties": { "filename": "ViaCarmine-ponte_torano_verso_piazza_carmine_1900.jpg", "text": "'Comment'", "time": "1900-00-00 00:00:00+00", "x_boresight": -0.12312128386836747, "y_boresight": 0.11283536214623291 }, "geometry": { "type": "Point", "coordinates": [ 14.37159419, 41.35528481 ] } },
+{ "type": "Feature", "properties": { "filename": "video_cotonificio-anni_1920-1930-CLIP.mp4", "text": "'Comment'", "time": "1925-00-00 00:00:00+00", "x_boresight": -0.12312128386836747, "y_boresight": 0.11283536214623291 }, "geometry": { "type": "Point", "coordinates": [ 14.37255641, 41.35479666 ] } },
+{ "type": "Feature", "properties": { "filename": "ponte_torano_verso_piazza_carmine_anni70.jpg", "text": "'Comment'", "time": "1972-00-00 00:00:00+00", "x_boresight": -0.12312128386836747, "y_boresight": 0.11283536214623291 }, "geometry": { "type": "Point", "coordinates": [ 14.37180035, 41.35524212 ] } },
+{ "type": "Feature", "properties": { "filename": "piazzacarmine_26-ottobre-1966.jpg", "text": "'Comment'", "time": "1900-00-00 00:00:00+00", "x_boresight": -0.12312128386836747, "y_boresight": 0.11283536214623291 }, "geometry": { "type": "Point", "coordinates": [ 14.37280979, 41.35455236 ] } },
+{ "type": "Feature", "properties": { "filename": "Piazza_Carmine-anni-1940-1950.jpg", "text": "'Comment'", "time": "1945-00-00 00:00:00+00", "x_boresight": -0.12312128386836747, "y_boresight": 0.11283536214623291 }, "geometry": { "type": "Point", "coordinates": [ 14.37222674, 41.35539924 ] } },
+{ "type": "Feature", "properties": { "filename": "OrologiaioCarnevale_PiazzaCarmine_fianco-BarCarletto-1900.jpg", "text": "'Comment'", "time": "1900-00-00 00:00:00+00", "x_boresight": -0.12312128386836747, "y_boresight": 0.11283536214623291 }, "geometry": { "type": "Point", "coordinates": [ 14.37209687, 41.35528435 ] } },
+{ "type": "Feature", "properties": { "filename": "abatttimento_ciminera_1972.jpg", "text": "'Comment'", "time": "1972-00-00 00:00:00+00", "x_boresight": -0.12312128386836747, "y_boresight": 0.11283536214623291 }, "geometry": { "type": "Point", "coordinates": [ 14.37197472, 41.35467633 ] } },
+{ "type": "Feature", "properties": { "filename": "ruderi_convento_carmine.jpg", "text": "'Comment here'", "time": "1960-00-00 00:00:00+00", "x_boresight": -0.12312128386836747, "y_boresight": 0.11283536214623291 }, "geometry": { "type": "Point", "coordinates": [ 14.3728472, 41.3548701 ] } }
 ]
 }
