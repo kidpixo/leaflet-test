@@ -1,12 +1,4 @@
-// myscript.js
-// Updated by well-it-wasnt-me
-// 10/12/2023
-
-// Welcome to the brain of this operation - myscript.js
-// Grab a drink, sit back, and let's make some map magic happen
-
-// "I believe that if life gives you lemons, you should make lemonade... And try to find somebody whose life has given them vodka, and have a party!" - Ron White
-
+// base url for local/remote operaitions
 const base_url = "https://kidpixo.github.io/leaflet-test/"
 // const base_url = "http://0.0.0.0:44000/"
 
@@ -71,17 +63,26 @@ var url_origin = base_url+'photos_origin.geojson';
 
 getJSON(url_origin, function(geojson_origin) {
   // Do something with the result
-  console.log(geojson_origin);
+  // console.log(geojson_origin);
   photos_origin_layer = L.geoJSON(geojson_origin, {
       onEachFeature: function(feature, layer) {
         var text = feature.properties.text.replace(/['"]+/g, '');
         var filename = feature.properties.filename;
         // Create a popup with the text and image
-        var popupContent = '<div>' +
-          '<h1>' + text + '</h1>' +
-          '<img id="markers_popup_photos" src="'+ base_url + 'photos/thumbnail_'+ filename + '" alt="' + filename + '">' +
-          '(<a href="'+ base_url + 'photos/'+ filename + '">original</a>)'+
+        var popupContent_pre = '<div>' +
+          '<h2>' + text + '</h2>' +
+          '<a href="'+ base_url + 'photos/'+ filename + '"  target="_blank" rel="noopener noreferrer">original';
+
+        if (filename.includes('.webm')) {
+            var popupContent_show = '<video controls id="markers_popup_photos" src="'+ base_url + 'photos/thumbnail_'+ filename + '" alt="' + filename + '"></video>'
+        } else {
+            var popupContent_show = '<img id="markers_popup_photos" src="'+ base_url + 'photos/thumbnail_'+ filename + '" alt="' + filename + '">'
+        }
+          
+         var popupContent_post = '</a>'+
           '</div>';
+
+        var popupContent = popupContent_pre+popupContent_show+popupContent_post
         layer.bindPopup(popupContent,{maxWidth: "auto"});
       }
     }).addTo(map);
@@ -95,7 +96,7 @@ var photos_fov_style = {
 };
 getJSON(url_fov, function(geojson_fov) {
   // Do something with the result
-  console.log(geojson_fov);
+  // console.log(geojson_fov);
   photos_fov_layer = L.geoJSON(geojson_fov, {style: photos_fov_style}).addTo(map);
 });
 
