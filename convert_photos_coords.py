@@ -54,6 +54,9 @@ def calculate_boresight(row):
 
 # calculate and add boresight
 photos_df = photos_df.apply(calculate_boresight,axis=1)
+photos_df['height'] = photos_df.height / photos_df.width
+photos_df['width'] = 1. # set to 1 mt
+print(photos_df.apply(lambda x: f'<a-image src="photos/{x.filename}" width="{x.width}" height="{x.height}" gps-new-entity-place="latitude: {x.latitude_origin}; longitude: {x.longitude_origin}" position="0 0 0" ></a-image>',axis=1).values)
 
 # drop some columns
 photos_df = photos_df.drop(columns=[ 'latitude_origin', 'longitude_origin',

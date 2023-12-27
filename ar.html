@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>AR.js A-Frame Location-based</title>
+        <script src="https://aframe.io/releases/1.3.0/aframe.min.js"></script>
+        <script type='text/javascript' src='https://raw.githack.com/AR-js-org/AR.js/master/three.js/build/ar-threex-location-only.js'></script>
+        <script type='text/javascript' src='https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js'></script>
+        <script src="https://unpkg.com/aframe-look-at-component@0.8.0/dist/aframe-look-at-component.min.js"></script>
+    </head>
+    <body>
+        <a-scene vr-mode-ui='enabled: false' arjs='sourceType: webcam; videoTexture: true; debugUIEnabled: true' renderer='antialias: true; alpha: true'>
+            <a-camera gps-new-camera='gpsMinDistance: 5'></a-camera>
+             <a-image src="photos/rologiaioCarnevale_PiazzaCarmine_fianco-BarCarletto-1900.jpg" width="1.0" height="1.459729151817534" look-at="[gps-new-camera]" gps-new-entity-place="latitude: 41.35528435; longitude: 14.37209687" position="0 0 0" ></a-image>
+             <a-image src="photos/PiazzaCarmine_PanetteriaLeonetti-1956_alluvione.jpg" width="1.0" height="0.7579214195183777" look-at="[gps-new-camera]" gps-new-entity-place="latitude: 41.35514858; longitude: 14.37261771" position="0 0 0" ></a-image>
+             <a-image src="photos/Piazza_Carmine-anni-1940-1950.jpg" width="1.0" height="0.6803394625176803" look-at="[gps-new-camera]" gps-new-entity-place="latitude: 41.35539924; longitude: 14.37222674" position="0 0 0" ></a-image>
+             <a-image src="photos/ViaCarmine-ponte_torano_verso_piazza_carmine_1900.jpg" width="1.0" height="1.594306049822064" look-at="[gps-new-camera]" gps-new-entity-place="latitude: 41.35528481; longitude: 14.37159419" position="0 0 0" ></a-image>
+             <a-image src="photos/abatttimento_ciminera_1972.jpg" width="1.0" height="0.6745362563237775" look-at="[gps-new-camera]" gps-new-entity-place="latitude: 41.35467633; longitude: 14.37197472" position="0 0 0" ></a-image>
+             <a-image src="photos/piazzacarmine_26-ottobre-1966.jpg" width="1.0" height="0.64125" look-at="[gps-new-camera]" gps-new-entity-place="latitude: 41.35455236; longitude: 14.37280979" position="0 0 0" ></a-image>
+             <a-image src="photos/ponte_torano_verso_piazza_carmine_anni70.jpg" width="1.0" height="0.64375" look-at="[gps-new-camera]" gps-new-entity-place="latitude: 41.35524212; longitude: 14.37180035" position="0 0 0" ></a-image>
+             <a-image src="photos/ruderi_convento_carmine.jpg" width="1.0" height="0.75" look-at="[gps-new-camera]" gps-new-entity-place="latitude: 41.3548701; longitude: 14.3728472" position="0 0 0" ></a-image>
+             <!-- I need to play a video here -->
+             <!-- <a-image src="photos/video_cotonificio-anni_1920-1930-CLIP.webm" width="1.0" height="0.5625" look-at="[gps-new-camera]" gps-new-entity-place="latitude: 41.35479666; longitude: 14.37255641" position="0 0 0" ></a-image> -->
+        </a-scene>
+    </body>
+</html>
+
