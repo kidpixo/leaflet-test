@@ -1,3 +1,10 @@
+## Links 
+
+Useful links : 
+
+- site : [kidpixo.github.io/leaflet-test](https://kidpixo.github.io/leaflet-test)
+- repo : [github.com/kidpixo/leaflet-test](https://github.com/kidpixo/leaflet-test)
+
 ## Test for Leaflet
 
 This test is hosted at gitpages here [Mappe antiche di Piedimonte | leaflet-test](https://kidpixo.github.io/leaflet-test/).
