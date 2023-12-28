@@ -12,4 +12,6 @@ Le mappe storiche sono state prese dal libro "Il cotonificio Egg di Piedimonte d
 
 ## Sperimentale
 
-[Realtá aumentata](ar.html)
+- [Realtá aumentata](ar.html)
+- site : [kidpixo.github.io/leaflet-test](https://kidpixo.github.io/leaflet-test)
+- repo : [github.com/kidpixo/leaflet-test](https://github.com/kidpixo/leaflet-test)
