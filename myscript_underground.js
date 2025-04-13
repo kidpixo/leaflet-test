@@ -34,15 +34,15 @@ tile_layer.options['layer_id']='osm'
 // Now, introducing the Bing Photo Layer - because regular maps are so last season
 // P.S. Don't forget to insert your api key - https://www.bingmapsportal.com/
 var bingLayer = new L.TileLayer.Bing('Ai2nLg63EqcX4-3ZTWHmKNQbUkcsnEYuVJGlD8V0GC83idoO0u8cu7AzD-UOz5KV', {
-    type: 'AerialWithLabels', // You can change the type to 'AerialWithLabels' or 'Road'
-    maxNativeZoom: 18,
+    type: 'Aerial', // You can change the type to 'AerialWithLabels' or 'Road'
+    maxNativeZoom: 19,
     maxZoom: 20,
 });
 // Adding the Bing Photo Layer to our map
 bingLayer.addTo(map);
 // digidem/leaflet-bing-layer bug: options are ignored
 // opacity in creation is not working!
-bingLayer.setOpacity(1);
+bingLayer.setOpacity(1.0);
 bingLayer.options['maxNativeZoom']=18
 bingLayer.options['maxZoom']=map.getMaxZoom()
 bingLayer.options['layer_id']='bing'
@@ -85,7 +85,7 @@ getJSON(url_origin, function(geojson_origin) {
         var popupContent = popupContent_pre+popupContent_show+popupContent_post
         layer.bindPopup(popupContent,{maxWidth: "auto"});
       }
-    }).addTo(map);
+    }) //.addTo(map);
 });
 
 // grab the data : Photo field of view for polygons
@@ -97,7 +97,7 @@ var photos_fov_style = {
 getJSON(url_fov, function(geojson_fov) {
   // Do something with the result
   // console.log(geojson_fov);
-  photos_fov_layer = L.geoJSON(geojson_fov, {style: photos_fov_style}).addTo(map);
+  photos_fov_layer = L.geoJSON(geojson_fov, {style: photos_fov_style}) //.addTo(map);
 });
 
 /**
@@ -153,7 +153,7 @@ const imageBounds = [
 ];
 
 // Add the image overlay to the map
-const imageOverlay = L.imageOverlay(base_url + 'Mappa_cut_modified.png', imageBounds, { opacity: 1.0 });
+const imageOverlay = L.imageOverlay(base_url + 'Mappa_cut_modified.png', imageBounds, { opacity: 1.0});
 imageOverlay.options['layer_id']='sotterraneo'
 imageOverlay.addTo(map);
 
@@ -167,8 +167,8 @@ async function loadGeoRaster() {
         debugLevel: 0,
         georaster:georaster,
         resolution: 256,
-        opacity: 0.0,
-    }).addTo(map);
+        opacity: 0.7,
+    }) //.addTo(map);
     geoRasterLayer.options['layer_id']='1884'
  
     // add second georaster
@@ -180,8 +180,8 @@ async function loadGeoRaster() {
         debugLevel: 0,
         georaster:georaster_2,
         resolution: 256,
-        opacity: 0.0,
-    }).addTo(map);
+        opacity: 0.7,
+    }) //.addTo(map);
     geoRasterLayer_2.options['layer_id']='1964'
 
     // build layers group
@@ -196,11 +196,11 @@ async function loadGeoRaster() {
     // bingLayer_id = bingLayer_id.concat(String(filter_layer_id('bing').options.opacity), '" />')
     // console.log( bingLayer_id );
     var overlayMaps = {
-        'bing<input type="range" id="opacity-slider-bing" min="0" max="1" step="0.1" value="1.0" />' : bingLayer,
-        '1884<input type="range" id="opacity-slider-1884" min="0" max="1" step="0.1" value="0.0" />' : geoRasterLayer,
-        '1964<input type="range" id="opacity-slider-1964" min="0" max="1" step="0.1" value="0.0" />' : geoRasterLayer_2,
+        'bing<input type="range" id="opacity-slider-bing" min="0" max="1" step="0.1" value="0.8" />' : bingLayer,
+        '1884<input type="range" id="opacity-slider-1884" min="0" max="1" step="0.1" value="0.7" />' : geoRasterLayer,
+        '1964<input type="range" id="opacity-slider-1964" min="0" max="1" step="0.1" value="0.7" />' : geoRasterLayer_2,
         'foto'                                                                                       : photos_origin_layer,
-        'foto fov<input type="range" id="opacity-slider-fov" min="0" max="1" step="0.1" value="0.0" />'  : photos_fov_layer,
+        'foto fov<input type="range" id="opacity-slider-fov" min="0" max="1" step="0.1" value="0.3" />'  : photos_fov_layer,
         'sotterraneo<input type="range" id="opacity-slider-sotterraneo" min="0" max="1" step="0.1" value="0.8" />' : imageOverlay,
     };
     // create global control
