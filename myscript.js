@@ -1,6 +1,6 @@
 // base url for local/remote operaitions
 const base_url = "https://kidpixo.github.io/leaflet-test/"
-//const base_url = "http://0.0.0.0:44000/"
+// const base_url = "http://0.0.0.0:8080/"
 
 var map = L.map("map", {
     center: [41.355946, 14.370868],
@@ -100,6 +100,47 @@ getJSON(url_fov, function(geojson_fov) {
   photos_fov_layer = L.geoJSON(geojson_fov, {style: photos_fov_style}).addTo(map);
 });
 
+/**
+ * Adds a PNG layer to the map by reading its .aux.xml file for georeferencing.
+ * @param {Object} map - The Leaflet map instance.
+ * @param {string} pngPath - The path to the PNG file.
+ * @returns {Promise<Object>} - The added Leaflet image overlay layer.
+ */
+async function addPngLayerFromAuxXml(map, pngPath) {
+    // Helper function to parse the .aux.xml file and extract the extent
+    async function getExtentFromAuxXml(auxXmlPath) {
+        const response = await fetch(auxXmlPath);
+        const xmlText = await response.text();
+        const parser = new DOMParser();
+        const xmlDoc = parser.parseFromString(xmlText, "application/xml");
+
+        const geoTransform = xmlDoc.querySelector("GeoTransform").textContent.trim().split(",").map(Number);
+        const [minX, pixelWidth, , maxY, , pixelHeight] = geoTransform;
+
+        const width = parseFloat(xmlDoc.querySelector("PAMDataset > Metadata > MDI[key='INTERLEAVE']")?.textContent || 0);
+        const height = parseFloat(xmlDoc.querySelector("PAMDataset > Metadata > MDI[key='AREA_OR_POINT']")?.textContent || 0);
+
+        const maxX = minX + width * pixelWidth;
+        const minY = maxY + height * pixelHeight;
+
+        return [[minY, minX], [maxY, maxX]];
+    }
+
+    // Construct the path to the .aux.xml file
+    const auxXmlPath = `${pngPath}.aux.xml`;
+
+    // Extract the extent from the .aux.xml file
+    const extent = await getExtentFromAuxXml(auxXmlPath);
+
+    // Create and add the PNG layer to the map
+    const pngLayer = L.imageOverlay(pngPath, extent, { opacity: 0.7 });
+    pngLayer.addTo(map);
+
+    return pngLayer;
+}
+
+// add png layer
+// const pngLayer = await addPngLayerFromAuxXml(map, base_url+'Mappa_cut_modified.png');
 
 async function loadGeoRaster() {
     // add first georaster
