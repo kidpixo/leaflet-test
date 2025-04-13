@@ -21,6 +21,23 @@ Versione [originale](images/1884.jpg) e [scalata](1884_enanched.jpg).
 
 La mappa 1964 é stata trovata da Daniela Mastrolorenzo nella Biblioteca comunale di Piedimonte Matese, ringrazio vivamente per le foto.
 
+```mermaid
+
+flowchart TD
+    A[1812-1813: **Fondazione del Cotonificio da Gian Giacomo Egg**] --> B(1815: Regolamento di polizia sanzionato)
+    B --> C[1818: Esenzione dazi importazione cotone ]
+    C --> D(1819-1843: **Periodo di Grande Espansione**)
+    D -- Fabbrica leader in Italia --> E[1843: Gian Gaspare Egg succede a Gian Giacomo Egg]
+    E --> F(1845: Premiato a Napoli)
+    F --> G(Post-1861: Crisi dovuta alla concorrenza e fine del protezionismo)
+    G --> H[1889: Amedeo Berner e figlio Guglielmo prendono la direzione]
+    H --> I(1889-1917: Nuovo periodo di prosperità:Periodo Berner)
+    I --> J(1917: Venduto alle Manifatture Cotoniere Meridionali)
+    J --> K[1943: **Distruzione del Cotonificio durante la guerra**]
+    K --> L(1972: L'area cambia fisionomia)
+
+```
+
 ## Sperimentale
 
 - [Realtá aumentata](ar.html)
