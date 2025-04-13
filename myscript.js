@@ -117,11 +117,18 @@ async function addPngLayerFromAuxXml(map, pngPath) {
         const geoTransform = xmlDoc.querySelector("GeoTransform").textContent.trim().split(",").map(Number);
         const [minX, pixelWidth, , maxY, , pixelHeight] = geoTransform;
 
-        const width = parseFloat(xmlDoc.querySelector("PAMDataset > Metadata > MDI[key='INTERLEAVE']")?.textContent || 0);
-        const height = parseFloat(xmlDoc.querySelector("PAMDataset > Metadata > MDI[key='AREA_OR_POINT']")?.textContent || 0);
+        // Dynamically get the image dimensions (width and height in pixels)
+        const image = new Image();
+        image.src = pngPath;
+        await new Promise((resolve) => {
+            image.onload = resolve;
+        });
+        const imageWidth = image.width;
+        const imageHeight = image.height;
 
-        const maxX = minX + width * pixelWidth;
-        const minY = maxY + height * pixelHeight;
+        // Calculate the geographical extent
+        const maxX = minX + imageWidth * pixelWidth;
+        const minY = maxY + imageHeight * pixelHeight;
 
         return [[minY, minX], [maxY, maxX]];
     }
@@ -139,8 +146,16 @@ async function addPngLayerFromAuxXml(map, pngPath) {
     return pngLayer;
 }
 
-// add png layer
-// const pngLayer = await addPngLayerFromAuxXml(map, base_url+'Mappa_cut_modified.png');
+// Define the bounds of the image
+const imageBounds = [
+    [41.35386391721536, 14.371526891622073], // Lower Left (Latitude, Longitude)
+    [41.354430965215357, 14.371859023622073] // Upper Right (Latitude, Longitude)
+];
+
+// Add the image overlay to the map
+const imageOverlay = L.imageOverlay(base_url + 'Mappa_cut_modified.png', imageBounds, { opacity: 0.7 });
+imageOverlay.options['layer_id']='sotterraneo'
+imageOverlay.addTo(map);
 
 async function loadGeoRaster() {
     // add first georaster
@@ -185,8 +200,8 @@ async function loadGeoRaster() {
         '1884<input type="range" id="opacity-slider-1884" min="0" max="1" step="0.1" value="0.7" />' : geoRasterLayer,
         '1964<input type="range" id="opacity-slider-1964" min="0" max="1" step="0.1" value="0.7" />' : geoRasterLayer_2,
         'foto'                                                                                       : photos_origin_layer,
-    // 'foto fov'                                                                                       : photos_fov_layer,
-    'foto fov<input type="range" id="opacity-slider-fov" min="0" max="1" step="0.1" value="0.3" />'  : photos_fov_layer,
+        'foto fov<input type="range" id="opacity-slider-fov" min="0" max="1" step="0.1" value="0.3" />'  : photos_fov_layer,
+        'sotterraneo<input type="range" id="opacity-slider-sotterraneo" min="0" max="1" step="0.1" value="0.8" />' : imageOverlay,
     };
     // create global control
     var layerControl = L.control.layers(baseMaps, 
@@ -214,6 +229,12 @@ async function loadGeoRaster() {
     document.querySelector('#opacity-slider-fov').addEventListener('input', function (e) {
         var opacity = e.target.value;
         photos_fov_layer.setStyle(new_style(opacity));
+    });
+
+    // opacity for sotterraneo
+    document.querySelector('#opacity-slider-sotterraneo').addEventListener('input', function (e) {
+        var opacity = e.target.value;
+        imageOverlay.setOpacity(opacity);
     });
 }
 
