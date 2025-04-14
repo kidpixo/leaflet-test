@@ -2,7 +2,7 @@
 
 Sto portanto avanti per hobby un progetto di registrazione di antiche mappe di [Piedimonte Matese](https://it.wikipedia.org/wiki/Piedimonte_Matese), in particolare riferito all'antico Cotonificio ora demolito.
 
-Il compito non é per nulla facile, a casua dei sistemi di riferimento usati nelle mappe e dei punti di ancoraggio, edifici o luoghi naturali, esistenti nelle mappe e tutt'ora localizzabili.
+Il compito non é per nulla facile, a causa dei sistemi di riferimento usati nelle mappe e il trovare punti di ancoraggio, edifici o luoghi naturali, esistenti nelle mappe e tutt'ora localizzabili.
 
 Queste mappe mappe un modo per mostrare questo lavoro e avere aiuto.
 
@@ -21,22 +21,20 @@ Versione [originale](images/1884.jpg) e [scalata](1884_enanched.jpg).
 
 La mappa 1964 é stata trovata da Daniela Mastrolorenzo nella Biblioteca comunale di Piedimonte Matese, ringrazio vivamente per le foto.
 
-```mermaid
+## Avvenimenti principali 
 
-flowchart TD
-    A[1812-1813: **Fondazione del Cotonificio da Gian Giacomo Egg**] --> B(1815: Regolamento di polizia sanzionato)
-    B --> C[1818: Esenzione dazi importazione cotone ]
-    C --> D(1819-1843: **Periodo di Grande Espansione**)
-    D -- Fabbrica leader in Italia --> E[1843: Gian Gaspare Egg succede a Gian Giacomo Egg]
-    E --> F(1845: Premiato a Napoli)
-    F --> G(Post-1861: Crisi dovuta alla concorrenza e fine del protezionismo)
-    G --> H[1889: Amedeo Berner e figlio Guglielmo prendono la direzione]
-    H --> I(1889-1917: Nuovo periodo di prosperità:Periodo Berner)
-    I --> J(1917: Venduto alle Manifatture Cotoniere Meridionali)
-    J --> K[1943: **Distruzione del Cotonificio durante la guerra**]
-    K --> L(1972: L'area cambia fisionomia)
-
-```
+- 1812-1813: Fondazione del Cotonificio da Gian Giacomo Egg
+- 1815: Regolamento di polizia interno 
+- 1818: Esenzione dazi importazione cotone
+- 1819-1843: Periodo di Grande Espansione , Fabbrica leader in Italia
+- 1843: Gian Gaspare Egg succede a Gian Giacomo Egg
+- 1845: Premiato a Napoli
+- Post-1861: Crisi dovuta alla concorrenza e fine del protezionismo
+- 1889: Amedeo Berner e figlio Guglielmo prendono la direzione
+- 1889-1917: Nuovo periodo di prosperità: Periodo Berner
+- 1917: Venduto alle Manifatture Cotoniere Meridionali
+- 1943: Distruzione del Cotonificio durante la guerra
+- 1972: L'area cambia fisionomia con l'abbattimento degli ultimi ruderi e l'iconica "ciminiera"
 
 ## Sperimentale
 
