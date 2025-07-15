@@ -47,6 +47,18 @@ bingLayer.options['maxNativeZoom']=18
 bingLayer.options['maxZoom']=map.getMaxZoom()
 bingLayer.options['layer_id']='bing'
 
+// Add Esri World Imagery Layer
+var esriLayer = L.tileLayer(
+    'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+        attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community',
+        maxNativeZoom: 18,
+        maxZoom: 20,
+        opacity: 0.4
+    }
+);
+esriLayer.addTo(map);
+esriLayer.options['layer_id'] = 'esri';
+
 var geoRasterLayer;
 var geoRasterLayer_2;
 
@@ -88,17 +100,17 @@ getJSON(url_origin, function(geojson_origin) {
     }).addTo(map);
 });
 
-// grab the data : Photo field of view for polygons
-var url_fov = base_url+'photos_fov.geojson';
-var photos_fov_style = {
-    "weight": 0,
-    "fillOpacity": .3
-};
-getJSON(url_fov, function(geojson_fov) {
-  // Do something with the result
-  // console.log(geojson_fov);
-  photos_fov_layer = L.geoJSON(geojson_fov, {style: photos_fov_style}).addTo(map);
-});
+// // grab the data : Photo field of view for polygons
+// var url_fov = base_url+'photos_fov.geojson';
+// var photos_fov_style = {
+//     "weight": 0,
+//     "fillOpacity": .3
+// };
+// getJSON(url_fov, function(geojson_fov) {
+//   // Do something with the result
+//   // console.log(geojson_fov);
+//   photos_fov_layer = L.geoJSON(geojson_fov, {style: photos_fov_style}).addTo(map);
+// });
 
 /**
  * Adds a PNG layer to the map by reading its .aux.xml file for georeferencing.
@@ -188,6 +200,7 @@ async function loadGeoRaster() {
     // basemaps
     var baseMaps = {
         "OpenStreetMap": tile_layer,
+        "Esri World Imagery": esriLayer,
         // "Bing": bingLayer
     };
     // overlays, insert input range as title with ad-hoc IDs
@@ -197,10 +210,11 @@ async function loadGeoRaster() {
     // console.log( bingLayer_id );
     var overlayMaps = {
         'bing<input type="range" id="opacity-slider-bing" min="0" max="1" step="0.1" value="0.4" />' : bingLayer,
+        'esri<input type="range" id="opacity-slider-esri" min="0" max="1" step="0.1" value="0.4" />' : esriLayer,
         '1884<input type="range" id="opacity-slider-1884" min="0" max="1" step="0.1" value="0.7" />' : geoRasterLayer,
         '1964<input type="range" id="opacity-slider-1964" min="0" max="1" step="0.1" value="0.7" />' : geoRasterLayer_2,
         'foto'                                                                                       : photos_origin_layer,
-        'foto fov<input type="range" id="opacity-slider-fov" min="0" max="1" step="0.1" value="0.3" />'  : photos_fov_layer,
+        // 'foto fov<input type="range" id="opacity-slider-fov" min="0" max="1" step="0.1" value="0.3" />'  : photos_fov_layer,
         'sotterraneo<input type="range" id="opacity-slider-sotterraneo" min="0" max="1" step="0.1" value="0.8" />' : imageOverlay,
     };
     // create global control
@@ -225,16 +239,21 @@ async function loadGeoRaster() {
         var opacity = e.target.value;
         bingLayer.setOpacity(opacity);
     });
-    // opacity for photos_fov
-    document.querySelector('#opacity-slider-fov').addEventListener('input', function (e) {
-        var opacity = e.target.value;
-        photos_fov_layer.setStyle(new_style(opacity));
-    });
+    // // opacity for photos_fov
+    // document.querySelector('#opacity-slider-fov').addEventListener('input', function (e) {
+    //     var opacity = e.target.value;
+    //     photos_fov_layer.setStyle(new_style(opacity));
+    // });
 
     // opacity for sotterraneo
     document.querySelector('#opacity-slider-sotterraneo').addEventListener('input', function (e) {
         var opacity = e.target.value;
         imageOverlay.setOpacity(opacity);
+    });
+    // opacity for Esri layer
+    document.querySelector('#opacity-slider-esri').addEventListener('input', function (e) {
+        var opacity = e.target.value;
+        esriLayer.setOpacity(opacity);
     });
 }
 
