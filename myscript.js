@@ -1,263 +1,254 @@
-// base url for local/remote operaitions
-const base_url = "https://kidpixo.github.io/leaflet-test/"
-// const base_url = "http://0.0.0.0:8080/"
+// Constants and configuration for the map and layers
+const BASE_URL = "https://kidpixo.github.io/leaflet-test/";
 
-var map = L.map("map", {
-    center: [41.355946, 14.370868],
-    zoom: 17,
-    zoomControl: true,
-    preferCanvas: false,
-});
-
-// add plugin leaflet-locatecontrol: A leaflet control to geolocate the user https://github.com/domoritz/leaflet-locatecontrol
-L.control.locate().addTo(map);
-
-// Let's lay down the base map, the canvas where our map artwork will unfold
-var tile_layer = L.tileLayer(
-    "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-    {
+// Layer configuration: defines all options for each layer
+const LAYER_CONFIG = {
+    OSM: {
+        id: "osm",
+        type: "basemap",
+        name: "OpenStreetMap",
+        url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
         attribution: "Mixed by Kidpixo",
-        detectRetina: false,
-        maxNativeZoom: 19,
-        maxZoom: 20,
-        minZoom: 2,
-        noWrap: false,
         opacity: 1,
-        subdomains: "abc",
-        tms: false,
-    }
-);
-// Drop it like it's hot on our map
-tile_layer.addTo(map);
-tile_layer.options['layer_id']='osm'
-
-// Now, introducing the Bing Photo Layer - because regular maps are so last season
-// P.S. Don't forget to insert your api key - https://www.bingmapsportal.com/
-var bingLayer = new L.TileLayer.Bing('Ai2nLg63EqcX4-3ZTWHmKNQbUkcsnEYuVJGlD8V0GC83idoO0u8cu7AzD-UOz5KV', {
-    type: 'AerialWithLabels', // You can change the type to 'AerialWithLabels' or 'Road'
-    maxNativeZoom: 18,
-    maxZoom: 20,
-});
-// Adding the Bing Photo Layer to our map
-bingLayer.addTo(map);
-// digidem/leaflet-bing-layer bug: options are ignored
-// opacity in creation is not working!
-bingLayer.setOpacity(0.4);
-bingLayer.options['maxNativeZoom']=18
-bingLayer.options['maxZoom']=map.getMaxZoom()
-bingLayer.options['layer_id']='bing'
-
-// Add Esri World Imagery Layer
-var esriLayer = L.tileLayer(
-    'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+        visible: true,
+        layerType: "tile"
+    },
+    // BING: {
+    //     id: "bing",
+    //     type: "overlay",
+    //     name: "Bing",
+    //     url: "BING_API_KEY_HERE", // Replace with your Bing API key or comment out to disable
+    //     opacity: 0.4,
+    //     slider: true,
+    //     visible: true,
+    //     layerType: "bing"
+    // },
+    ESRI: {
+        id: "esri",
+        type: "overlay",
+        name: "Esri",
+        url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
         attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community',
-        maxNativeZoom: 18,
-        maxZoom: 20,
-        opacity: 0.4
+        opacity: 0.8,
+        slider: true,
+        visible: true,
+        layerType: "tile"
+    },
+    RASTER_1884: {
+        id: "1884",
+        type: "overlay",
+        name: "1884",
+        url: BASE_URL + "COG_1884_EPSG4326.tif",
+        opacity: 0.7,
+        slider: true,
+        visible: true,
+        layerType: "georaster",
+        extraOptions: { resolution: 256 }
+    },
+    RASTER_1964: {
+        id: "1964",
+        type: "overlay",
+        name: "1964",
+        url: BASE_URL + "COG_1964_EPSG4326.tif",
+        opacity: 0.7,
+        slider: true,
+        visible: true,
+        layerType: "georaster",
+        extraOptions: { resolution: 256 }
+    },
+    SOTTERRANEO: {
+        id: "sotterraneo",
+        type: "overlay",
+        name: "sotterraneo",
+        url: BASE_URL + 'Mappa_cut_modified.png',
+        opacity: 0.8,
+        slider: true,
+        visible: true,
+        layerType: "image",
+        imageBounds: [
+            [41.35386391721536, 14.371526891622073],
+            [41.354430965215357, 14.371859023622073]
+        ]
+    },
+    FOTO: {
+        id: "foto",
+        type: "overlay",
+        name: "foto",
+        url: BASE_URL + 'photos_origin.geojson',
+        slider: false,
+        visible: true,
+        layerType: "geojson"
     }
-);
-esriLayer.addTo(map);
-esriLayer.options['layer_id'] = 'esri';
+    // Add more as needed, or comment out to disable
+};
 
-var geoRasterLayer;
-var geoRasterLayer_2;
+// Global object to store all map layers for easy access
+let layers = {};
 
-
-function getJSON(url, cb) {
-  fetch(url)
-    .then(response => response.json())
-    .then(result => cb(result))
-    .catch(error => console.error(error));
+// Main initialization function: sets up the map and all layers/controls
+async function initMap() {
+    createMap(); // Create the Leaflet map instance
+    addBasemaps(); // Add base map layers (OSM, Bing, Esri)
+    await addRasterLayers(); // Wait for rasters to load
+    addPhotoLayers(); // Add photo origin points as GeoJSON
+    addImageOverlays(); // Add PNG image overlay (underground)
+    addLayerControls(); // Add layer switcher and overlay controls
+    setupOpacityControls(); // Add opacity sliders for layers
+    setupCustomControls(); // Add custom controls (e.g., reset zoom)
 }
 
-// grab the data : Photo origin points for markers
-var url_origin = base_url+'photos_origin.geojson';
+// Create the Leaflet map and add geolocation control
+function createMap() {
+    layers.map = L.map("map", {
+        center: [41.355946, 14.370868], // Initial map center
+        zoom: 17, // Initial zoom level
+        zoomControl: true,
+        preferCanvas: false,
+    });
+    L.control.locate().addTo(layers.map); // Add geolocate user button
+}
 
-getJSON(url_origin, function(geojson_origin) {
-  // Do something with the result
-  // console.log(geojson_origin);
-  photos_origin_layer = L.geoJSON(geojson_origin, {
-      onEachFeature: function(feature, layer) {
-        var text = feature.properties.text.replace(/['"]+/g, '');
-        var filename = feature.properties.filename;
-        // Create a popup with the text and image
-        var popupContent_pre = '<div>' +
-          '<h2>' + text + '</h2>' +
-          '<a href="'+ base_url + 'photos/'+ filename + '"  target="_blank" rel="noopener noreferrer">original';
-
-        if (filename.includes('.webm')) {
-            var popupContent_show = '<video controls id="markers_popup_photos" src="'+ base_url + 'photos/thumbnail_'+ filename + '" alt="' + filename + '"></video>'
-        } else {
-            var popupContent_show = '<img id="markers_popup_photos" src="'+ base_url + 'photos/thumbnail_'+ filename + '" alt="' + filename + '">'
+// Add base map layers: OSM, Bing, Esri
+function addBasemaps() {
+    for (const key in LAYER_CONFIG) {
+        const cfg = LAYER_CONFIG[key];
+        if (!cfg.visible || cfg.type !== 'basemap') continue;
+        if (cfg.layerType === 'tile') {
+            layers[cfg.id] = L.tileLayer(cfg.url, {
+                attribution: cfg.attribution,
+                opacity: cfg.opacity ?? 1,
+                ...cfg.extraOptions
+            }).addTo(layers.map);
+            layers[cfg.id].options['layer_id'] = cfg.id;
         }
-          
-         var popupContent_post = '</a>'+
-          '</div>';
-
-        var popupContent = popupContent_pre+popupContent_show+popupContent_post
-        layer.bindPopup(popupContent,{maxWidth: "auto"});
-      }
-    }).addTo(map);
-});
-
-// // grab the data : Photo field of view for polygons
-// var url_fov = base_url+'photos_fov.geojson';
-// var photos_fov_style = {
-//     "weight": 0,
-//     "fillOpacity": .3
-// };
-// getJSON(url_fov, function(geojson_fov) {
-//   // Do something with the result
-//   // console.log(geojson_fov);
-//   photos_fov_layer = L.geoJSON(geojson_fov, {style: photos_fov_style}).addTo(map);
-// });
-
-/**
- * Adds a PNG layer to the map by reading its .aux.xml file for georeferencing.
- * @param {Object} map - The Leaflet map instance.
- * @param {string} pngPath - The path to the PNG file.
- * @returns {Promise<Object>} - The added Leaflet image overlay layer.
- */
-async function addPngLayerFromAuxXml(map, pngPath) {
-    // Helper function to parse the .aux.xml file and extract the extent
-    async function getExtentFromAuxXml(auxXmlPath) {
-        const response = await fetch(auxXmlPath);
-        const xmlText = await response.text();
-        const parser = new DOMParser();
-        const xmlDoc = parser.parseFromString(xmlText, "application/xml");
-
-        const geoTransform = xmlDoc.querySelector("GeoTransform").textContent.trim().split(",").map(Number);
-        const [minX, pixelWidth, , maxY, , pixelHeight] = geoTransform;
-
-        // Dynamically get the image dimensions (width and height in pixels)
-        const image = new Image();
-        image.src = pngPath;
-        await new Promise((resolve) => {
-            image.onload = resolve;
-        });
-        const imageWidth = image.width;
-        const imageHeight = image.height;
-
-        // Calculate the geographical extent
-        const maxX = minX + imageWidth * pixelWidth;
-        const minY = maxY + imageHeight * pixelHeight;
-
-        return [[minY, minX], [maxY, maxX]];
+        // Add more basemap types as needed
     }
-
-    // Construct the path to the .aux.xml file
-    const auxXmlPath = `${pngPath}.aux.xml`;
-
-    // Extract the extent from the .aux.xml file
-    const extent = await getExtentFromAuxXml(auxXmlPath);
-
-    // Create and add the PNG layer to the map
-    const pngLayer = L.imageOverlay(pngPath, extent, { opacity: 0.7 });
-    pngLayer.addTo(map);
-
-    return pngLayer;
+    // Add overlays that are actually basemap-like (e.g. Bing, Esri) as overlays but not as basemaps
+    for (const key in LAYER_CONFIG) {
+        const cfg = LAYER_CONFIG[key];
+        if (!cfg.visible || cfg.type !== 'overlay') continue;
+        if (cfg.layerType === 'tile' || cfg.layerType === 'bing') {
+            if (cfg.layerType === 'bing') {
+                if (typeof L.TileLayer.Bing !== 'undefined') {
+                    layers[cfg.id] = new L.TileLayer.Bing(cfg.url, {
+                        type: 'AerialWithLabels',
+                        opacity: cfg.opacity ?? 1,
+                        ...cfg.extraOptions
+                    }).addTo(layers.map);
+                    layers[cfg.id].setOpacity(cfg.opacity ?? 1);
+                    layers[cfg.id].options['layer_id'] = cfg.id;
+                }
+            } else {
+                layers[cfg.id] = L.tileLayer(cfg.url, {
+                    attribution: cfg.attribution,
+                    opacity: cfg.opacity ?? 1,
+                    ...cfg.extraOptions
+                }).addTo(layers.map);
+                layers[cfg.id].options['layer_id'] = cfg.id;
+            }
+        }
+    }
 }
 
-// Define the bounds of the image
-const imageBounds = [
-    [41.35386391721536, 14.371526891622073], // Lower Left (Latitude, Longitude)
-    [41.354430965215357, 14.371859023622073] // Upper Right (Latitude, Longitude)
-];
-
-// Add the image overlay to the map
-const imageOverlay = L.imageOverlay(base_url + 'Mappa_cut_modified.png', imageBounds, { opacity: 0.7 });
-imageOverlay.options['layer_id']='sotterraneo'
-imageOverlay.addTo(map);
-
-async function loadGeoRaster() {
-    // add first georaster
-    var url_to_geotiff_file = base_url+"COG_1884_EPSG4326.tif";
-    // var url_to_geotiff_file = "http://0.0.0.0:44000/COG_1884_EPSG4326.tif";
-    var georaster = await parseGeoraster(url_to_geotiff_file, {'resampleMethod':'nearest'});
-
-    geoRasterLayer = new GeoRasterLayer({
-        debugLevel: 0,
-        georaster:georaster,
-        resolution: 256,
-        opacity: 0.7,
-    }).addTo(map);
-    geoRasterLayer.options['layer_id']='1884'
- 
-    // add second georaster
-    var url_to_geotiff_file_2 = base_url+"COG_1964_EPSG4326.tif";
-    // var url_to_geotiff_file_2 = "http://0.0.0.0:44000/COG_1964_EPSG4326.tif";
-    var georaster_2 = await parseGeoraster(url_to_geotiff_file_2, {'resampleMethod':'nearest'});
-
-    geoRasterLayer_2 = new GeoRasterLayer({
-        debugLevel: 0,
-        georaster:georaster_2,
-        resolution: 256,
-        opacity: 0.7,
-    }).addTo(map);
-    geoRasterLayer_2.options['layer_id']='1964'
-
-    // build layers group
-    // basemaps
-    var baseMaps = {
-        "OpenStreetMap": tile_layer,
-        "Esri World Imagery": esriLayer,
-        // "Bing": bingLayer
-    };
-    // overlays, insert input range as title with ad-hoc IDs
-    // // try to get the layer opacity
-    // var bingLayer_id ='bing<input type="range" id="opacity-slider-bing" min="0" max="1" step="0.1" value="'
-    // bingLayer_id = bingLayer_id.concat(String(filter_layer_id('bing').options.opacity), '" />')
-    // console.log( bingLayer_id );
-    var overlayMaps = {
-        'bing<input type="range" id="opacity-slider-bing" min="0" max="1" step="0.1" value="0.4" />' : bingLayer,
-        'esri<input type="range" id="opacity-slider-esri" min="0" max="1" step="0.1" value="0.4" />' : esriLayer,
-        '1884<input type="range" id="opacity-slider-1884" min="0" max="1" step="0.1" value="0.7" />' : geoRasterLayer,
-        '1964<input type="range" id="opacity-slider-1964" min="0" max="1" step="0.1" value="0.7" />' : geoRasterLayer_2,
-        'foto'                                                                                       : photos_origin_layer,
-        // 'foto fov<input type="range" id="opacity-slider-fov" min="0" max="1" step="0.1" value="0.3" />'  : photos_fov_layer,
-        'sotterraneo<input type="range" id="opacity-slider-sotterraneo" min="0" max="1" step="0.1" value="0.8" />' : imageOverlay,
-    };
-    // create global control
-    var layerControl = L.control.layers(baseMaps, 
-        overlayMaps,
-        {"autoZIndex": true, "collapsed": false, "position": "topright"}
-    ).addTo(map);
-
-    // create listener for opacity input
-    // opacity for 1884 layer : geoRasterLayer
-    document.querySelector('#opacity-slider-1884').addEventListener('input', function (e) {
-        var opacity = e.target.value;
-        geoRasterLayer.setOpacity(opacity);
-    });
-    // opacity for 1964 layer : geoRasterLayer_2
-    document.querySelector('#opacity-slider-1964').addEventListener('input', function (e) {
-        var opacity = e.target.value;
-        geoRasterLayer_2.setOpacity(opacity);
-    });
-    // opacity for Bing layer
-    document.querySelector('#opacity-slider-bing').addEventListener('input', function (e) {
-        var opacity = e.target.value;
-        bingLayer.setOpacity(opacity);
-    });
-    // // opacity for photos_fov
-    // document.querySelector('#opacity-slider-fov').addEventListener('input', function (e) {
-    //     var opacity = e.target.value;
-    //     photos_fov_layer.setStyle(new_style(opacity));
-    // });
-
-    // opacity for sotterraneo
-    document.querySelector('#opacity-slider-sotterraneo').addEventListener('input', function (e) {
-        var opacity = e.target.value;
-        imageOverlay.setOpacity(opacity);
-    });
-    // opacity for Esri layer
-    document.querySelector('#opacity-slider-esri').addEventListener('input', function (e) {
-        var opacity = e.target.value;
-        esriLayer.setOpacity(opacity);
-    });
+async function addRasterLayers() {
+    for (const key in LAYER_CONFIG) {
+        const cfg = LAYER_CONFIG[key];
+        if (!cfg.visible || cfg.layerType !== 'georaster') continue;
+        const georaster = await parseGeoraster(cfg.url, {'resampleMethod':'nearest'});
+        layers[cfg.id] = new GeoRasterLayer({
+            debugLevel: 0,
+            georaster: georaster,
+            opacity: cfg.opacity ?? 1,
+            ...cfg.extraOptions
+        }).addTo(layers.map);
+        layers[cfg.id].options['layer_id'] = cfg.id;
+    }
 }
 
-(function() {
+// Add photo origin points as a GeoJSON layer
+function addPhotoLayers() {
+    for (const key in LAYER_CONFIG) {
+        const cfg = LAYER_CONFIG[key];
+        if (!cfg.visible || cfg.layerType !== 'geojson') continue;
+        getJSON(cfg.url, function(geojson) {
+            layers[cfg.id] = L.geoJSON(geojson, {
+                onEachFeature: function(feature, layer) {
+                    var text = feature.properties.text.replace(/['"]+/g, '');
+                    var filename = feature.properties.filename;
+                    var popupContent_pre = '<div>' +
+                        '<h2>' + text + '</h2>' +
+                        '<a href="'+ BASE_URL + 'photos/'+ filename + '"  target="_blank" rel="noopener noreferrer">original';
+                    var popupContent_show = filename.includes('.webm') ?
+                        '<video controls id="markers_popup_photos" src="'+ BASE_URL + 'photos/thumbnail_'+ filename + '" alt="' + filename + '"></video>' :
+                        '<img id="markers_popup_photos" src="'+ BASE_URL + 'photos/thumbnail_'+ filename + '" alt="' + filename + '">';
+                    var popupContent_post = '</a></div>';
+                    var popupContent = popupContent_pre + popupContent_show + popupContent_post;
+                    layer.bindPopup(popupContent, {maxWidth: "auto"});
+                }
+            }).addTo(layers.map);
+        });
+    }
+}
+
+// Add PNG image overlay (underground map)
+function addImageOverlays() {
+    for (const key in LAYER_CONFIG) {
+        const cfg = LAYER_CONFIG[key];
+        if (!cfg.visible || cfg.layerType !== 'image') continue;
+        layers[cfg.id] = L.imageOverlay(cfg.url, cfg.imageBounds, { opacity: cfg.opacity ?? 1 });
+        layers[cfg.id].options['layer_id'] = cfg.id;
+        layers[cfg.id].addTo(layers.map);
+    }
+}
+
+// Add layer switcher and overlay controls
+function addLayerControls() {
+    setTimeout(() => {
+        // Build baseMaps and overlayMaps dynamically from LAYER_CONFIG
+        let baseMaps = {};
+        let overlayMaps = {};
+        for (const key in LAYER_CONFIG) {
+            const cfg = LAYER_CONFIG[key];
+            const layer = layers[cfg.id];
+            if (!layer) continue;
+            if (cfg.type === 'basemap') {
+                baseMaps[cfg.name] = layer;
+            } else if (cfg.type === 'overlay') {
+                if (cfg.slider) {
+                    overlayMaps[`${cfg.name}<input type=\"range\" id=\"opacity-slider-${cfg.id}\" min=\"0\" max=\"1\" step=\"0.1\" value=\"${cfg.opacity ?? 1}\" />`] = layer;
+                } else {
+                    overlayMaps[cfg.name] = layer;
+                }
+            }
+        }
+        layers.layerControl = L.control.layers(baseMaps, overlayMaps, {"autoZIndex": true, "collapsed": false, "position": "topright"}).addTo(layers.map);
+    }, 500);
+}
+
+// Add event listeners for opacity sliders for each layer
+function setupOpacityControls() {
+    setTimeout(() => {
+        for (const key in LAYER_CONFIG) {
+            const cfg = LAYER_CONFIG[key];
+            if (!cfg.slider) continue;
+            const el = document.querySelector(`#opacity-slider-${cfg.id}`);
+            const layer = layers[cfg.id];
+            if (el && layer) {
+                el.addEventListener('input', function(e) {
+                    var opacity = e.target.value;
+                    if (cfg.id === 'fov') {
+                        layer.setStyle(new_style(opacity));
+                    } else {
+                        layer.setOpacity(opacity);
+                    }
+                });
+            }
+        }
+    }, 700);
+}
+
+// Add a custom control (reset zoom button)
+function setupCustomControls() {
     var control = new L.Control({ position: 'topleft' });
     control.onAdd = function(map) {
         var azoom = L.DomUtil.create('a', 'mt-0');
@@ -269,38 +260,45 @@ async function loadGeoRaster() {
         L.DomEvent
             .disableClickPropagation(azoom)
             .addListener(azoom, 'click', function() {
-                map.setView(map.options.center, map.options.zoom);
+                layers.map.setView(layers.map.options.center, layers.map.options.zoom);
             }, azoom);
         return azoom;
     };
-    control.addTo(map);
-})();
+    control.addTo(layers.map);
+}
 
-// see [(2) Leaflet geoJSON - function within setStyle() : gis](https://www.reddit.com/r/gis/comments/ukyip9/leaflet_geojson_function_within_setstyle/)
+// Utility: fetch JSON data from a URL
+function getJSON(url, cb) {
+    fetch(url)
+        .then(response => response.json())
+        .then(result => cb(result))
+        .catch(error => console.error(error));
+}
+
+// Utility: return a style object with custom fill opacity
 const new_style = function(opacity) {
-    return {
-    "fillOpacity": opacity
-    };
+    return { "fillOpacity": opacity };
 };
 
-function filter_layer_id (layer_id) {
-    for (let key in map._layers) {
-     if (map._layers[key].options.layer_id == layer_id) {
-         return map._layers[key]
+// Utility: find a layer by its custom layer_id
+function filter_layer_id(layer_id) {
+    for (let key in layers.map._layers) {
+        if (layers.map._layers[key].options.layer_id == layer_id) {
+            return layers.map._layers[key];
         }
     }
 }
 
-function return_all_layer_id () {
-    for (let key in map._layers) {
-        if (map._layers[key].options.hasOwnProperty('layer_id')) {
-            console.log(key,map._layers[key].options.layer_id);
+// Utility: log all layer IDs in the map (for debugging)
+function return_all_layer_id() {
+    for (let key in layers.map._layers) {
+        if (layers.map._layers[key].options.hasOwnProperty('layer_id')) {
+            console.log(key, layers.map._layers[key].options.layer_id);
         }
     }
 }
 
-
-// loadGeoRaster();
+// Start everything: initialize map and add raster layers (async)
 (async () => {
-    await loadGeoRaster();
+    await initMap();
 })();
