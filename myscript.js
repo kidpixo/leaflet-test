@@ -1,5 +1,6 @@
 // Constants and configuration for the map and layers
 const BASE_URL = "https://kidpixo.github.io/leaflet-test/";
+// const BASE_URL = "http://0.0.0.0:44000/";
 
 // Layer configuration: defines all options for each layer
 const LAYER_CONFIG = {
@@ -50,11 +51,12 @@ const LAYER_CONFIG = {
         type: "overlay",
         name: "1964",
         url: BASE_URL + "COG_1964_EPSG4326.tif",
+        // url: BASE_URL + "COG_1964_EPSG3857.jpeg.cog",
         opacity: 0.7,
         slider: true,
         visible: true,
         layerType: "georaster",
-        extraOptions: { resolution: 256 }
+        extraOptions: { resolution: 256}
     },
     SOTTERRANEO: {
         id: "sotterraneo",
