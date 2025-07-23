@@ -12,7 +12,8 @@ const LAYER_CONFIG = {
         attribution: "Mixed by Kidpixo",
         opacity: 1,
         visible: true,
-        layerType: "tile"
+        layerType: "tile",
+        showInControl: false
     },
     // BING: {
     //     id: "bing",
@@ -33,7 +34,8 @@ const LAYER_CONFIG = {
         opacity: 0.8,
         slider: true,
         visible: true,
-        layerType: "tile"
+        layerType: "tile",
+        showInControl: true
     },
     RASTER_1884: {
         id: "1884",
@@ -44,32 +46,35 @@ const LAYER_CONFIG = {
         slider: true,
         visible: true,
         layerType: "georaster",
-        extraOptions: { resolution: 256 }
+        extraOptions: { resolution: 256 },
+        showInControl: true
     },
     RASTER_1964: {
         id: "1964",
         type: "overlay",
         name: "1964",
         url: BASE_URL + "COG_1964.tif",
-        // url: BASE_URL + "COG_1964_EPSG3857.jpeg.cog",
         opacity: 0.7,
         slider: true,
         visible: true,
         layerType: "georaster",
-        extraOptions: { resolution: 256}
+        extraOptions: { resolution: 256},
+        showInControl: true
     },
-    // RASTER_1940 {
-    //     id: "1940",
-    //     type: "overlay",
-    //     name: "1940",
-    //     url: BASE_URL + "COG_1940.tif",
-    //     opacity: 0.7,
-    //     slider: true,
-    //     visible: true,
-    //     layerType: "georaster",
-    //     extraOptions: { resolution: 256}
-    // },
-    SOTTERRANEO: {
+     RASTER_1940: {
+        id: "1940",
+        type: "overlay",
+        name: "1940",
+        url: BASE_URL + "COG_1940.tif",
+        opacity: 0.7,
+        slider: true,
+        visible: true,
+        layerType: "georaster",
+        extraOptions: { resolution: 256},
+        showInControl: true,
+        grayscale: true
+    },
+   SOTTERRANEO: {
         id: "sotterraneo",
         type: "overlay",
         name: "sotterraneo",
@@ -81,7 +86,8 @@ const LAYER_CONFIG = {
         imageBounds: [
             [41.35386391721536, 14.371526891622073],
             [41.354430965215357, 14.371859023622073]
-        ]
+        ],
+        showInControl: true
     },
     FOTO: {
         id: "foto",
@@ -90,7 +96,8 @@ const LAYER_CONFIG = {
         url: BASE_URL + 'photos_origin.geojson',
         slider: false,
         visible: true,
-        layerType: "geojson"
+        layerType: "geojson",
+        showInControl: true
     }
     // Add more as needed, or comment out to disable
 };
@@ -168,12 +175,20 @@ async function addRasterLayers() {
         const cfg = LAYER_CONFIG[key];
         if (!cfg.visible || cfg.layerType !== 'georaster') continue;
         const georaster = await parseGeoraster(cfg.url, {'resampleMethod':'nearest'});
-        layers[cfg.id] = new GeoRasterLayer({
+        let options = {
             debugLevel: 0,
             georaster: georaster,
             opacity: cfg.opacity ?? 1,
             ...cfg.extraOptions
-        }).addTo(layers.map);
+        };
+        if (cfg.grayscale) {
+            options.pixelValuesToColorFn = values => {
+                const v = values[0];
+                if (v === 0 || v === undefined) return null;
+                return `rgb(${v},${v},${v})`;
+            };
+        }
+        layers[cfg.id] = new GeoRasterLayer(options).addTo(layers.map);
         layers[cfg.id].options['layer_id'] = cfg.id;
     }
 }
@@ -217,13 +232,13 @@ function addImageOverlays() {
 // Add layer switcher and overlay controls
 function addLayerControls() {
     setTimeout(() => {
-        // Build baseMaps and overlayMaps dynamically from LAYER_CONFIG
         let baseMaps = {};
         let overlayMaps = {};
         for (const key in LAYER_CONFIG) {
             const cfg = LAYER_CONFIG[key];
             const layer = layers[cfg.id];
             if (!layer) continue;
+            if (cfg.showInControl === false) continue; // skip if not to be shown
             if (cfg.type === 'basemap') {
                 baseMaps[cfg.name] = layer;
             } else if (cfg.type === 'overlay') {
