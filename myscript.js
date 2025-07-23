@@ -122,6 +122,7 @@ function createMap() {
     layers.map = L.map("map", {
         center: [41.355946, 14.370868], // Initial map center
         zoom: 17, // Initial zoom level
+        maxZoom: 20, // or another value depending on your data
         zoomControl: true,
         preferCanvas: false,
     });
@@ -137,6 +138,7 @@ function addBasemaps() {
             layers[cfg.id] = L.tileLayer(cfg.url, {
                 attribution: cfg.attribution,
                 opacity: cfg.opacity ?? 1,
+                maxZoom: layers.map.options.maxZoom,
                 ...cfg.extraOptions
             }).addTo(layers.map);
             layers[cfg.id].options['layer_id'] = cfg.id;
@@ -153,6 +155,7 @@ function addBasemaps() {
                     layers[cfg.id] = new L.TileLayer.Bing(cfg.url, {
                         type: 'AerialWithLabels',
                         opacity: cfg.opacity ?? 1,
+                        maxZoom: layers.map.options.maxZoom,
                         ...cfg.extraOptions
                     }).addTo(layers.map);
                     layers[cfg.id].setOpacity(cfg.opacity ?? 1);
@@ -162,6 +165,7 @@ function addBasemaps() {
                 layers[cfg.id] = L.tileLayer(cfg.url, {
                     attribution: cfg.attribution,
                     opacity: cfg.opacity ?? 1,
+                    maxZoom: layers.map.options.maxZoom,
                     ...cfg.extraOptions
                 }).addTo(layers.map);
                 layers[cfg.id].options['layer_id'] = cfg.id;
