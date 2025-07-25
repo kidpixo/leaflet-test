@@ -15,7 +15,7 @@ Contattatemi a kidpixo [at] gmail.com o cercatemi su qualsiasi piattaforma come 
 
 ### Mappa del 1884
 
-La mappa del **1884** proviene  dal libro ["Il cotonificio Egg di Piedimonte d'Alife"][egg-book].[^egg-book-footnote].
+La [mappa del 1884](map.html?layers=esri:1,1884&zoom=17&center=41.35291123887426,14.37137938576178) proviene  dal libro ["Il cotonificio Egg di Piedimonte d'Alife"][egg-book].[^egg-book-footnote].
 La versione nella [mappa](map.html) é stata artificialmente ingrandita grazie alla AI, a scapito di perdere le scritte.
 Versione [originale](images/1884.jpg) e [scalata](1884_enanched.jpg).
 
