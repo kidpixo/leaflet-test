@@ -13,13 +13,23 @@ Sono aperto a qualsiasi informazione,cooperazioni o foto riguardo alla struttura
 
 Contattatemi a kidpixo [at] gmail.com o cercatemi su qualsiasi piattaforma come kidpixo.
 
-La mappa del **1884** proviene prese dal libro ["Il cotonificio Egg di Piedimonte d'Alife"](https://drive.google.com/file/d/1h53BRzBEh_saqBUhcvaPWc-PPpT_DO9n/view?usp=drive_link) del Gruppo Memorie Storiche di Piedimonte Matese.
-Il libro é stato digitalizzato e disponibile qui, previo consenso degli autori che sono riustico a contattare.
-Gli autori dei rispettivi capitoli conservano tutti i diritti.
+### Mappa del 1884
+
+La mappa del **1884** proviene  dal libro ["Il cotonificio Egg di Piedimonte d'Alife"][egg-book].[^egg-book-footnote].
 La versione nella [mappa](map.html) é stata artificialmente ingrandita grazie alla AI, a scapito di perdere le scritte.
 Versione [originale](images/1884.jpg) e [scalata](1884_enanched.jpg).
 
-La mappa 1964 é stata trovata da Daniela Mastrolorenzo nella Biblioteca comunale di Piedimonte Matese, ringrazio vivamente per le foto.
+### Mappa del 1940 
+
+La mappa del **1940** proviene anche dal libro ["Il cotonificio Egg di Piedimonte d'Alife"][egg-book].[^egg-book-footnote].
+
+
+## Mappa del 1964
+La mappa del 1964 é stata trovata da Daniela Mastrolorenzo nella Biblioteca comunale di Piedimonte Matese, ringrazio vivamente per le foto.
+
+### Aerofotogrammetria del ~1970
+
+L'aerofotogrammetria del ~1970 é stata fortnita da Vittorio Imperadore, ringrazio vivamente per le foto.
 
 ## Avvenimenti principali 
 
@@ -41,3 +51,7 @@ La mappa 1964 é stata trovata da Daniela Mastrolorenzo nella Biblioteca comunal
 - [Realtá aumentata](ar.html)
 - site : [kidpixo.github.io/leaflet-test](https://kidpixo.github.io/leaflet-test)
 - repo : [github.com/kidpixo/leaflet-test](https://github.com/kidpixo/leaflet-test)
+
+[^egg-book-footnote]: Il libro é stato digitalizzato e disponibile qui, previo consenso degli autori che sono riustico a contattare. Gli autori dei rispettivi capitoli conservano tutti i diritti.
+
+[egg-book]: https://drive.google.com/file/d/1h53BRzBEh_saqBUhcvaPWc-PPpT_DO9n/view?usp=drive_link
