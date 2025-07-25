@@ -7,7 +7,7 @@ Il compito non é per nulla facile, a causa dei sistemi di riferimento usati nel
 Queste mappe mappe un modo per mostrare questo lavoro e avere aiuto.
 
 - [Mappa](map.html)
-- [Mappa Sotterraneo](map_underground.html) : dati del sotterraneo scoperto e mappato da me ed amici negli anni 90. Sospetto siano sotterranei dell'ultimo cotonificio. La mappatura é alquanto inaccurata.
+- [Mappa Sotterraneo](map.html?layers=esri:1,1940:0.3,sotterraneo&zoom=19&center=41.35407412989468,14.371736124204523) : dati del sotterraneo scoperto e mappato da me ed amici negli anni 90. Sospetto siano sotterranei dell'ultimo cotonificio. La mappatura é alquanto inaccurata.
 
 Sono aperto a qualsiasi informazione,cooperazioni o foto riguardo alla struttura del cotonifio.
 
@@ -21,15 +21,15 @@ Versione [originale](images/1884.jpg) e [scalata](1884_enanched.jpg).
 
 ### Mappa del 1940 
 
-La mappa del **1940** proviene anche dal libro ["Il cotonificio Egg di Piedimonte d'Alife"][egg-book].[^egg-book-footnote].
+La [mappa del 1940](map.html?layers=esri:1,1940&zoom=19&center=41.354551168057654,14.372118579536332) proviene anche dal libro ["Il cotonificio Egg di Piedimonte d'Alife"][egg-book].[^egg-book-footnote].
 
 
 ## Mappa del 1964
-La mappa del 1964 é stata trovata da Daniela Mastrolorenzo nella Biblioteca comunale di Piedimonte Matese, ringrazio vivamente per le foto.
+La [mappa del 1964](map.html?layers=esri:1,1964&zoom=17&center=41.35354642098286,14.371536590552383) é stata trovata da Daniela Mastrolorenzo nella Biblioteca comunale di Piedimonte Matese, ringrazio vivamente per le foto.
 
 ### Aerofotogrammetria del ~1970
 
-L'aerofotogrammetria del ~1970 é stata fortnita da Vittorio Imperadore, ringrazio vivamente per le foto.
+L'[aerofotogrammetria del ~1970](map.html?layers=esri:1,1970:0.8&zoom=17&center=41.35243225337143,14.369152554117889) é stata fornita da Vittorio Imperadore, ringrazio vivamente per le foto.
 
 ## Avvenimenti principali 
 
@@ -50,7 +50,9 @@ L'aerofotogrammetria del ~1970 é stata fortnita da Vittorio Imperadore, ringraz
 
 - [Realtá aumentata](ar.html)
 - site : [kidpixo.github.io/leaflet-test](https://kidpixo.github.io/leaflet-test)
-- repo : [github.com/kidpixo/leaflet-test](https://github.com/kidpixo/leaflet-test)
+- per sviluppatori :
+    - code repository : [github.com/kidpixo/leaflet-test](https://github.com/kidpixo/leaflet-test)
+    - [README](README.md) tecnico
 
 [^egg-book-footnote]: Il libro é stato digitalizzato e disponibile qui, previo consenso degli autori che sono riustico a contattare. Gli autori dei rispettivi capitoli conservano tutti i diritti.
 
