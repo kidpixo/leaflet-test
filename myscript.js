@@ -1,6 +1,6 @@
 // Constants and configuration for the map and layers
-const BASE_URL = "https://kidpixo.github.io/leaflet-test/";
-// const BASE_URL = "http://0.0.0.0:44000/";
+// const BASE_URL = "https://kidpixo.github.io/leaflet-test/";
+const BASE_URL = "http://0.0.0.0:44000/";
 
 // Layer configuration: defines all options for each layer
 const LAYER_CONFIG = {
@@ -31,7 +31,7 @@ const LAYER_CONFIG = {
         name: "Esri",
         url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
         attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community',
-        opacity: 0.8,
+        opacity: 1.0,
         slider: true,
         visible: true,
         layerType: "tile",
@@ -41,6 +41,7 @@ const LAYER_CONFIG = {
         id: "1884",
         type: "overlay",
         name: "1884",
+        year: "1884",
         url: BASE_URL + "COG_1884.tif",
         opacity: 0.7,
         slider: true,
@@ -49,10 +50,25 @@ const LAYER_CONFIG = {
         extraOptions: { resolution: 256 },
         showInControl: true
     },
+    RASTER_1940: {
+        id: "1940",
+        type: "overlay",
+        name: "1940",
+        year: "1940",
+        url: BASE_URL + "COG_1940.tif",
+        opacity: 0.7,
+        slider: true,
+        visible: true,
+        layerType: "georaster",
+        extraOptions: { resolution: 256},
+        showInControl: true,
+        grayscale: true
+    },
     RASTER_1964: {
         id: "1964",
         type: "overlay",
         name: "1964",
+        year: "1964",
         url: BASE_URL + "COG_1964.tif",
         opacity: 0.7,
         slider: true,
@@ -61,11 +77,12 @@ const LAYER_CONFIG = {
         extraOptions: { resolution: 256},
         showInControl: true
     },
-     RASTER_1940: {
-        id: "1940",
+       RASTER_1970: {
+        id: "1970",
         type: "overlay",
-        name: "1940",
-        url: BASE_URL + "COG_1940.tif",
+        name: "1970",
+        year: "1970",
+        url: BASE_URL + "COG_1970.tif",
         opacity: 0.7,
         slider: true,
         visible: true,
@@ -110,18 +127,59 @@ async function initMap() {
     createMap(); // Create the Leaflet map instance
     addBasemaps(); // Add base map layers (OSM, Bing, Esri)
     await addRasterLayers(); // Wait for rasters to load
-    addPhotoLayers(); // Add photo origin points as GeoJSON
+    await addPhotoLayers(); // Add photo origin points as GeoJSON (now awaited)
     addImageOverlays(); // Add PNG image overlay (underground)
     addLayerControls(); // Add layer switcher and overlay controls
     setupOpacityControls(); // Add opacity sliders for layers
     setupCustomControls(); // Add custom controls (e.g., reset zoom)
 }
 
+// --- URL PARAMS HANDLING ---
+(function handleUrlParams() {
+    const params = new URLSearchParams(window.location.search);
+    // Layers and opacity: ?layers=1884:0.5,1964:0.8,1940
+    const layersParam = params.get('layers');
+    if (layersParam) {
+        // Hide all overlays by default
+        for (const key in LAYER_CONFIG) {
+            if (LAYER_CONFIG[key].type === 'overlay') {
+                LAYER_CONFIG[key].visible = false;
+            }
+        }
+        // Show only those in the URL
+        layersParam.split(',').forEach(entry => {
+            let [name, opacity] = entry.split(':');
+            // Find by name (case-insensitive)
+            for (const key in LAYER_CONFIG) {
+                if (LAYER_CONFIG[key].name.toLowerCase() === name.toLowerCase()) {
+                    LAYER_CONFIG[key].visible = true;
+                    if (opacity !== undefined && !isNaN(parseFloat(opacity))) {
+                        LAYER_CONFIG[key].opacity = parseFloat(opacity);
+                    }
+                }
+            }
+        });
+    }
+    // Center: ?center=lat,lng
+    const centerParam = params.get('center');
+    if (centerParam) {
+        const [lat, lng] = centerParam.split(',').map(Number);
+        if (!isNaN(lat) && !isNaN(lng)) {
+            window._mapCenterOverride = [lat, lng];
+        }
+    }
+    // Zoom: ?zoom=18
+    const zoomParam = params.get('zoom');
+    if (zoomParam && !isNaN(parseInt(zoomParam))) {
+        window._mapZoomOverride = parseInt(zoomParam);
+    }
+})();
+
 // Create the Leaflet map and add geolocation control
 function createMap() {
     layers.map = L.map("map", {
-        center: [41.355946, 14.370868], // Initial map center
-        zoom: 17, // Initial zoom level
+        center: window._mapCenterOverride || [41.35512154669242, 14.372210047410501], // Initial map center
+        zoom: window._mapZoomOverride || 17, // Initial zoom level
         maxZoom: 20, // or another value depending on your data
         zoomControl: true,
         preferCanvas: false,
@@ -199,27 +257,33 @@ async function addRasterLayers() {
 
 // Add photo origin points as a GeoJSON layer
 function addPhotoLayers() {
+    const promises = [];
     for (const key in LAYER_CONFIG) {
         const cfg = LAYER_CONFIG[key];
         if (!cfg.visible || cfg.layerType !== 'geojson') continue;
-        getJSON(cfg.url, function(geojson) {
-            layers[cfg.id] = L.geoJSON(geojson, {
-                onEachFeature: function(feature, layer) {
-                    var text = feature.properties.text.replace(/['"]+/g, '');
-                    var filename = feature.properties.filename;
-                    var popupContent_pre = '<div>' +
-                        '<h2>' + text + '</h2>' +
-                        '<a href="'+ BASE_URL + 'photos/'+ filename + '"  target="_blank" rel="noopener noreferrer">original';
-                    var popupContent_show = filename.includes('.webm') ?
-                        '<video controls id="markers_popup_photos" src="'+ BASE_URL + 'photos/thumbnail_'+ filename + '" alt="' + filename + '"></video>' :
-                        '<img id="markers_popup_photos" src="'+ BASE_URL + 'photos/thumbnail_'+ filename + '" alt="' + filename + '">';
-                    var popupContent_post = '</a></div>';
-                    var popupContent = popupContent_pre + popupContent_show + popupContent_post;
-                    layer.bindPopup(popupContent, {maxWidth: "auto"});
-                }
-            }).addTo(layers.map);
+        const promise = new Promise((resolve, reject) => {
+            getJSON(cfg.url, function(geojson) {
+                layers[cfg.id] = L.geoJSON(geojson, {
+                    onEachFeature: function(feature, layer) {
+                        var text = feature.properties.text.replace(/['"]+/g, '');
+                        var filename = feature.properties.filename;
+                        var popupContent_pre = '<div>' +
+                            '<h2>' + text + '</h2>' +
+                            '<a href="'+ BASE_URL + 'photos/'+ filename + '"  target="_blank" rel="noopener noreferrer">original';
+                        var popupContent_show = filename.includes('.webm') ?
+                            '<video controls id="markers_popup_photos" src="'+ BASE_URL + 'photos/thumbnail_'+ filename + '" alt="' + filename + '"></video>' :
+                            '<img id="markers_popup_photos" src="'+ BASE_URL + 'photos/thumbnail_'+ filename + '" alt="' + filename + '">';
+                        var popupContent_post = '</a></div>';
+                        var popupContent = popupContent_pre + popupContent_show + popupContent_post;
+                        layer.bindPopup(popupContent, {maxWidth: "auto"});
+                    }
+                }).addTo(layers.map);
+                resolve();
+            });
         });
+        promises.push(promise);
     }
+    return Promise.all(promises);
 }
 
 // Add PNG image overlay (underground map)
@@ -247,7 +311,7 @@ function addLayerControls() {
                 baseMaps[cfg.name] = layer;
             } else if (cfg.type === 'overlay') {
                 if (cfg.slider) {
-                    overlayMaps[`${cfg.name}<input type=\"range\" id=\"opacity-slider-${cfg.id}\" min=\"0\" max=\"1\" step=\"0.1\" value=\"${cfg.opacity ?? 1}\" />`] = layer;
+                    overlayMaps[`${cfg.name}<input type=\"range\" id=\"opacity-slider-${cfg.id}\" class=\"opacity-slider\" min=\"0\" max=\"1\" step=\"0.1\" value=\"${cfg.opacity ?? 1}\" />`] = layer;
                 } else {
                     overlayMaps[cfg.name] = layer;
                 }
@@ -299,6 +363,107 @@ function setupCustomControls() {
     control.addTo(layers.map);
 }
 
+// --- Timeline Slider ---
+function createTimelineSlider() {
+    // Only use overlays that are currently visible and have a year
+    const years = Object.values(LAYER_CONFIG)
+        .filter(cfg => cfg.type === 'overlay' && cfg.year && cfg.visible)
+        .map(cfg => parseInt(cfg.year))
+        .filter(y => !isNaN(y))
+        .sort((a, b) => a - b);
+    if (years.length < 2) return; // Need at least 2 visible layers with year
+
+    // Create slider container
+    const sliderContainer = document.createElement('div');
+    sliderContainer.id = 'timeline-slider-container';
+    sliderContainer.className = 'position-absolute w-100 px-4 pb-2';
+    sliderContainer.style.bottom = '60px'; // Move slider higher above credits (was '0')
+    sliderContainer.style.left = '0';
+    sliderContainer.style.zIndex = '1000';
+    sliderContainer.style.pointerEvents = 'auto';
+    sliderContainer.style.background = 'none';
+    sliderContainer.style.textAlign = 'center';
+
+    // Create slider input
+    const slider = document.createElement('input');
+    slider.type = 'range';
+    slider.id = 'timeline-slider';
+    slider.className = 'form-range'; // Bootstrap style
+    slider.min = 0;
+    slider.max = years.length - 1;
+    slider.step = '0.01'; // Smooth fade
+    slider.value = 0;
+    slider.style.width = '60%';
+    slider.style.margin = '0 auto';
+
+    // Create year labels
+    const labelRow = document.createElement('div');
+    labelRow.className = 'd-flex justify-content-between w-60 mx-auto';
+    labelRow.style.width = '60%';
+    labelRow.style.position = 'relative';
+    labelRow.style.zIndex = '1001';
+    years.forEach((year, i) => {
+        const lbl = document.createElement('span');
+        lbl.innerText = year;
+        lbl.style.fontSize = '1.25em';
+        lbl.style.color = '#222';
+        lbl.style.fontWeight = 'bold';
+        lbl.style.textShadow = '0 0 8px #fff, 0 0 2px #fff, 0 0 1px #fff'; // White outer glow for readability
+        lbl.style.padding = '2px 6px';
+        lbl.style.borderRadius = '4px';
+        labelRow.appendChild(lbl);
+    });
+
+    sliderContainer.appendChild(labelRow);
+    sliderContainer.appendChild(slider);
+    document.body.appendChild(sliderContainer);
+
+    // Handler for slider movement
+    slider.addEventListener('input', function(e) {
+        const val = parseFloat(e.target.value);
+        // Find nearest years
+        const i = Math.floor(val);
+        const frac = val - i;
+        years.forEach((year, idx) => {
+            // Find layer for this year
+            const layerKey = Object.keys(LAYER_CONFIG).find(k => LAYER_CONFIG[k].year && parseInt(LAYER_CONFIG[k].year) === year);
+            if (!layerKey) return;
+            const layerObj = layers[LAYER_CONFIG[layerKey].id];
+            if (!layerObj) return;
+            let opacity = 0;
+            if (idx === i) {
+                opacity = 1 - frac;
+            } else if (idx === i + 1) {
+                opacity = frac;
+            }
+            // Set layer opacity
+            layerObj.setOpacity(opacity);
+            LAYER_CONFIG[layerKey].opacity = opacity;
+            // Sync opacity slider in control
+            const sliderEl = document.querySelector(`#opacity-slider-${LAYER_CONFIG[layerKey].id}`);
+            if (sliderEl) sliderEl.value = opacity;
+            // Ensure layer is visible in control
+            const checkbox = document.querySelector(`input.leaflet-control-layers-selector[type='checkbox'][data-layerid='${LAYER_CONFIG[layerKey].id}']`);
+            if (checkbox && !checkbox.checked) checkbox.checked = true;
+        });
+    });
+}
+
+// Patch: add data-layerid to checkboxes after layer control is created
+function patchLayerControlCheckboxes() {
+    setTimeout(() => {
+        const selectors = document.querySelectorAll('.leaflet-control-layers-selector[type="checkbox"]');
+        selectors.forEach(cb => {
+            const label = cb.parentElement.textContent;
+            for (const key in LAYER_CONFIG) {
+                if (label.includes(LAYER_CONFIG[key].name)) {
+                    cb.setAttribute('data-layerid', LAYER_CONFIG[key].id);
+                }
+            }
+        });
+    }, 1000);
+}
+
 // Utility: fetch JSON data from a URL
 function getJSON(url, cb) {
     fetch(url)
@@ -333,4 +498,6 @@ function return_all_layer_id() {
 // Start everything: initialize map and add raster layers (async)
 (async () => {
     await initMap();
+    patchLayerControlCheckboxes();
+    createTimelineSlider();
 })();
