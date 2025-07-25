@@ -1,47 +1,177 @@
-## Links 
+# Leaflet Test: Cloud-Optimized GeoTIFFs and Interactive Historical Maps
 
-Useful links : 
+## Problem-First Approach
 
-- site : [kidpixo.github.io/leaflet-test](https://kidpixo.github.io/leaflet-test)
-- repo : [github.com/kidpixo/leaflet-test](https://github.com/kidpixo/leaflet-test)
+### The Problem
+Modern web mapping often requires overlaying large, high-resolution historical maps and geospatial data (like COG/GeoTIFF) on top of interactive base maps. Developers need a way to:
+- Efficiently serve and visualize large raster datasets (COG/GeoTIFF) in the browser.
+- Provide a user-friendly, interactive map with custom overlays, opacity controls, and dynamic configuration.
+- Allow end-users to customize the map view (layers, opacity, center, zoom) via URL parameters for sharing and reproducibility.
 
-## Test for Leaflet
+### The Solution
+This project combines Leaflet.js, georaster-layer-for-leaflet, and custom JavaScript to deliver a highly interactive, configurable map experience. It supports:
+- Cloud-Optimized GeoTIFF (COG) overlays
+- Dynamic layer control and opacity sliders
+- GeoJSON photo markers with popups
+- User geolocation
+- URL-driven map configuration
 
-This test is hosted at gitpages here [Mappe antiche di Piedimonte | leaflet-test](https://kidpixo.github.io/leaflet-test/).
+---
 
-I am trying to visualize some maps with Leaflets.
+## Story-Code-Context Pattern
 
-I want to use a particular type of GeoTiff image called COG defined [as](https://www.usgs.gov/faqs/what-are-cloud-optimized-geotiffs-cogs) 
+### Story (Why)
+- **Purpose:** Visualize and explore historical maps and photos of Piedimonte, overlaying COG rasters and interactive data on modern basemaps.
+- **Motivation:** Make large, archival geospatial data accessible and explorable for historians, researchers, and the public.
+- **Design Choices:**
+  - Use COGs for efficient, partial loading of large rasters.
+  - Use Leaflet for a familiar, extensible map UI.
+  - Expose all configuration (layers, opacity, center, zoom) via URL for easy sharing and reproducibility.
 
-> A Cloud Optimized GeoTIFF (COG) is a GeoTIFF file with an internal organization that enables more efficient workflows in the cloud environment.  It does this by leveraging the ability of clients issuing ​HTTP GET range requests to ask for just the parts of a file they need.
+### Code (How)
 
-## Roadmap 
+#### Quick Start
+```sh
+# Start a local server with Range support (for COGs)
+pip install RangeHTTPServer
+python -m RangeHTTPServer 44000
+# Or, for CORS support:
+python rangeserver.py
+```
 
-- [x] Leafeat maps with a COG layer via [GeoTIFF/georaster-layer-for-leaflet](https://github.com/GeoTIFF/georaster-layer-for-leaflet/)  (thanks [anddam (anddam)](https://github.com/anddam))
-- [x] add layers to control panel  (thanks [well-it-wasnt-me (Antonio)](https://github.com/well-it-wasnt-me))
-- [x] add an opacity slider to the controls (thanks [well-it-wasnt-me (Antonio)](https://github.com/well-it-wasnt-me)) 
-- [x] add bing photo layer: hot to hide the API Key? Just leave it there.
-- [x] fix bing layer disappearing at zoom 19: this is a bug in digidem/leaflet-bing-layer ([#8](https://github.com/digidem/leaflet-bing-layer/issues/8)). Manually add those options after layer creation.
-- [x] add plugin [leaflet-locatecontrol](https://github.com/domoritz/leaflet-locatecontrol)  to geolocate the user. This works only under https, general browsers security.
-- [x] Add second COG layer
-- [x] Add all control in an unique L.control.layers and use custom text as title to insert input range + define listener for them to set opacity.
-- [ ] Add an option to identify the layers 
-    - [x] Manually add map._layers[X].options.layer_id
-    - [x] Implement functions to filters layers based on layer_id and lsit all IDs. 
-    - [ ] Functions don't work inside promise async `loadGeoRaster`, why? 
-- [x] Add some example markers from known old pictures, reading from geojson coming from csv
-    - [x] add their Field of View: a rough estimation of the field, a triangle Polygon 
-    - [x] add opacity slider for geojson via setStyle, not the same as other layers
-    - [ ] link those to arjs 
+#### Example Usage
+Open in browser:
+```
+http://localhost:44000/map.html?layers=1884:0.5,1964:0.8,1940&center=41.355,14.371&zoom=18
+```
+- Shows only the 1884, 1964, and 1940 overlays, with custom opacity and map view.
 
-## Run it - simple way 
+#### Layer Configuration Example (myscript.js)
+```js
+const LAYER_CONFIG = {
+  RASTER_1884: {
+    id: "1884",
+    name: "1884",
+    url: BASE_URL + "COG_1884.tif",
+    opacity: 0.7,
+    visible: true,
+    layerType: "georaster",
+    // ...
+  },
+  // ...
+};
+```
 
-you need an http server that understand [HTTP range requests](https://developer.mozilla.org/en-US/docs/Web/HTTP/Range_requests) like [danvk/RangeHTTPServer: SimpleHTTPServer with support for Range requests](https://github.com/danvk/RangeHTTPServer/).
+#### URL Parameter API
+- `?layers=1884:0.5,1964:0.8,1940` — show only these overlays, with optional opacity
+- `?center=41.355,14.371` — set map center
+- `?zoom=18` — set map zoom
 
-Install `pip install RangeHTTPServer` and run `python -m RangeHTTPServer 44000`
+### Context (Where/When)
+- Use this project when you need to visualize large geospatial rasters (COG/GeoTIFF) interactively in the browser.
+- Integrates with any static or Python HTTP server supporting Range requests.
+- Easily extendable: add new layers, markers, or controls by editing `LAYER_CONFIG` and `myscript.js`.
+- URL-driven configuration is ideal for sharing specific map views or embedding in other web apps.
 
-This doesn't care/handle [Cross-Origin Resource Sharing (CORS)](https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS)
+---
 
-## Run it - better way 
+## Project Structure
 
-Run `python rangeserver.py` , it runs an exended `RangeHTTPServer` to handle CORS.
+- `map.html` — Main HTML entry point, includes all CSS/JS dependencies and the map container.
+- `myscript.js` — Core logic for map creation, layer management, URL parsing, and UI controls.
+- `LAYER_CONFIG` — Centralized configuration for all map layers (basemaps, overlays, images, geojson).
+- `rangeserver.py` — (Optional) Python HTTP server with CORS and Range support for COGs.
+- `photos_origin.geojson` — Example photo marker data.
+- `COG_*.tif` — Cloud-Optimized GeoTIFF raster overlays.
+
+---
+
+## myscript.js: Structure & Deep Dive
+
+### 1. URL Parameter Handling
+- Parses `layers`, `center`, and `zoom` from the URL.
+- If `layers` is present, only those overlays are shown (with optional opacity via `:`).
+- If not, all overlays use their config defaults.
+- Example: `?layers=1884:0.5,1964:0.8,1940`.
+
+### 2. Layer Configuration (`LAYER_CONFIG`)
+- All map layers (basemaps, overlays, images, geojson) are defined here.
+- Each layer has:
+  - `id`, `name`, `url`, `opacity`, `visible`, `layerType`, `showInControl`, etc.
+- Overlays can be toggled and have their opacity set via URL or config.
+
+### 3. Map Initialization
+- `initMap()` orchestrates map creation, layer addition, controls, and UI setup.
+- `createMap()` sets up the Leaflet map, using center/zoom from URL or defaults.
+
+### 4. Layer Addition
+- `addBasemaps()`, `addRasterLayers()`, `addPhotoLayers()`, `addImageOverlays()`
+- Each function reads from `LAYER_CONFIG` and adds the appropriate Leaflet/GeoRasterLayer/GeoJSON/ImageOverlay.
+- Raster layers support grayscale rendering if specified.
+
+### 5. Layer Controls & Opacity
+- All overlays appear in a single `L.control.layers` panel.
+- Opacity sliders are dynamically generated and update the map in real time.
+
+### 6. Custom Controls
+- Includes a reset zoom button and user geolocation via `leaflet-locatecontrol`.
+
+### 7. Utility Functions
+- Fetch JSON, filter layers by ID, log all layer IDs, etc.
+
+---
+
+## Actionable Examples
+
+### Show Only 1884 and 1964 Layers, Custom Opacity
+```
+map.html?layers=1884:0.5,1964:0.8&center=41.355,14.371&zoom=18
+```
+
+### Show All Layers (Default)
+```
+map.html
+```
+
+### Show Only 1940 Layer, Default Opacity
+```
+map.html?layers=1940
+```
+
+---
+
+## Troubleshooting & FAQ
+
+### Common Issues
+- **COG/GeoTIFF not displaying:** Ensure your server supports HTTP Range requests and CORS.
+- **Layer not visible:** Check the `layers` URL param and `LAYER_CONFIG` for correct `name` and `visible` settings.
+- **Opacity not updating:** Make sure the layer is listed in the URL and the value is a valid number between 0 and 1.
+- **Map not centering/zooming:** Check the `center` and `zoom` URL params for valid values.
+
+### Debugging Tips
+- Use browser dev tools to inspect network requests for COG tiles.
+- Use the console utility functions in `myscript.js` to log and filter layers.
+- Check for errors in the browser console for missing files or CORS issues.
+
+---
+
+## Workflow Integration
+- All configuration is code-driven and version-controlled in `myscript.js` and `map.html`.
+- Add new layers or change defaults by editing `LAYER_CONFIG`.
+- Documentation and usage examples are kept in this README for easy onboarding and reference.
+
+---
+
+## Contributing & Extending
+- Fork the repo and submit PRs for new features, bug fixes, or documentation improvements.
+- Add new overlays, basemaps, or controls by extending `LAYER_CONFIG` and the relevant functions in `myscript.js`.
+- For advanced use, integrate with other Leaflet plugins or custom data sources.
+
+---
+
+## Credits
+- [GeoTIFF/georaster-layer-for-leaflet](https://github.com/GeoTIFF/georaster-layer-for-leaflet/)
+- [Leaflet](https://leafletjs.com/)
+- [RangeHTTPServer](https://github.com/danvk/RangeHTTPServer)
+- [leaflet-locatecontrol](https://github.com/domoritz/leaflet-locatecontrol)
+- [Contributors](https://github.com/kidpixo/leaflet-test/graphs/contributors)
