@@ -1,6 +1,8 @@
 // Constants and configuration for the map and layers
-const BASE_URL = "https://kidpixo.github.io/leaflet-test/";
-// const BASE_URL = "http://0.0.0.0:44000/";
+// automatic URL detection for local or production environment
+const BASE_URL = window.location.hostname === "localhost" || window.location.hostname === "0.0.0.0"
+  ? "http://0.0.0.0:44000/"
+  : "https://kidpixo.github.io/leaflet-test/";
 
 // Layer configuration: defines all options for each layer
 const LAYER_CONFIG = {
