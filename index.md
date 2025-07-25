@@ -52,7 +52,7 @@ L'[aerofotogrammetria del ~1970](map.html?layers=esri:1,1970:0.8&zoom=17&center=
 - site : [kidpixo.github.io/leaflet-test](https://kidpixo.github.io/leaflet-test)
 - per sviluppatori :
     - code repository : [github.com/kidpixo/leaflet-test](https://github.com/kidpixo/leaflet-test)
-    - README tecnico ([html](README.html) or [markdown](https://github.com/kidpixo/leaflet-test/blob/main/README.md) su github)
+    - README tecnico ([markdown](https://github.com/kidpixo/leaflet-test/blob/main/README.md) su github)
 
 [^egg-book-footnote]: Il libro é stato digitalizzato e disponibile qui, previo consenso degli autori che sono riustico a contattare. Gli autori dei rispettivi capitoli conservano tutti i diritti.
 
