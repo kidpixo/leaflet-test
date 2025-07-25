@@ -1,32 +1,34 @@
-# Leaflet Test: Cloud-Optimized GeoTIFFs and Interactive Historical Maps
+# Leaflet Historical Map Viewer: Developer Documentation
 
 ## Problem-First Approach
 
 ### The Problem
-Modern web mapping often requires overlaying large, high-resolution historical maps and geospatial data (like COG/GeoTIFF) on top of interactive base maps. Developers need a way to:
+Web developers and digital historians often need to overlay historical, georeferenced maps and photos on top of modern basemaps, allowing users to explore changes over time. The challenge is to:
 - Efficiently serve and visualize large raster datasets (COG/GeoTIFF) in the browser.
-- Provide a user-friendly, interactive map with custom overlays, opacity controls, and dynamic configuration.
-- Allow end-users to customize the map view (layers, opacity, center, zoom) via URL parameters for sharing and reproducibility.
+- Provide interactive controls for toggling layers, adjusting opacity, and filtering by year.
+- Make the map state easily shareable and reproducible via URL parameters.
+- Support extensibility for new datasets and overlays.
 
 ### The Solution
-This project combines Leaflet.js, georaster-layer-for-leaflet, and custom JavaScript to deliver a highly interactive, configurable map experience. It supports:
-- Cloud-Optimized GeoTIFF (COG) overlays
-- Dynamic layer control and opacity sliders
-- GeoJSON photo markers with popups
-- User geolocation
-- URL-driven map configuration
+This project leverages Leaflet.js, georaster-layer-for-leaflet, and a modular, developer-friendly JavaScript architecture to deliver:
+- Fast, partial loading of large COG rasters.
+- Dynamic layer control, opacity sliders, and a timeline slider for year-based filtering.
+- GeoJSON photo markers with popups.
+- URL-driven configuration for sharing and embedding custom map views.
+- Easy extensibility for new layers and datasets.
 
 ---
 
 ## Story-Code-Context Pattern
 
 ### Story (Why)
-- **Purpose:** Visualize and explore historical maps and photos of Piedimonte, overlaying COG rasters and interactive data on modern basemaps.
-- **Motivation:** Make large, archival geospatial data accessible and explorable for historians, researchers, and the public.
+- **Purpose:** Enable interactive exploration of historical maps and photos for a small town, visualizing changes in buildings, rivers, and urban landscape over time.
+- **Motivation:** Lower the barrier for historians, researchers, and developers to publish and explore geospatial archives.
 - **Design Choices:**
-  - Use COGs for efficient, partial loading of large rasters.
-  - Use Leaflet for a familiar, extensible map UI.
-  - Expose all configuration (layers, opacity, center, zoom) via URL for easy sharing and reproducibility.
+  - Use COGs for efficient raster streaming.
+  - Centralize layer configuration for easy adaptation.
+  - Expose all controls and state via URL for reproducibility.
+  - Use Bootstrap for clean, responsive UI elements.
 
 ### Code (How)
 
@@ -52,6 +54,7 @@ const LAYER_CONFIG = {
   RASTER_1884: {
     id: "1884",
     name: "1884",
+    year: "1884",
     url: BASE_URL + "COG_1884.tif",
     opacity: 0.7,
     visible: true,
@@ -68,14 +71,14 @@ const LAYER_CONFIG = {
 - `?zoom=18` — set map zoom
 
 ### Context (Where/When)
-- Use this project when you need to visualize large geospatial rasters (COG/GeoTIFF) interactively in the browser.
-- Integrates with any static or Python HTTP server supporting Range requests.
+- Use this project to visualize any set of georeferenced rasters and overlays in Leaflet.
+- Adaptable to any static or Python HTTP server supporting Range requests.
 - Easily extendable: add new layers, markers, or controls by editing `LAYER_CONFIG` and `myscript.js`.
 - URL-driven configuration is ideal for sharing specific map views or embedding in other web apps.
 
 ---
 
-## Project Structure
+## Progressive Disclosure: Project Structure
 
 - `map.html` — Main HTML entry point, includes all CSS/JS dependencies and the map container.
 - `myscript.js` — Core logic for map creation, layer management, URL parsing, and UI controls.
@@ -88,17 +91,17 @@ const LAYER_CONFIG = {
 
 ## myscript.js: Structure & Deep Dive
 
-### 1. URL Parameter Handling
+### 1. Layer Configuration (`LAYER_CONFIG`)
+- All map layers (basemaps, overlays, images, geojson) are defined in a single object.
+- Each layer has:
+  - `id`, `name`, `year` (for timeline), `url`, `opacity`, `visible`, `layerType`, `showInControl`, etc.
+- To add new data, simply add a new entry to `LAYER_CONFIG`.
+
+### 2. URL Parameter Handling
 - Parses `layers`, `center`, and `zoom` from the URL.
 - If `layers` is present, only those overlays are shown (with optional opacity via `:`).
 - If not, all overlays use their config defaults.
 - Example: `?layers=1884:0.5,1964:0.8,1940`.
-
-### 2. Layer Configuration (`LAYER_CONFIG`)
-- All map layers (basemaps, overlays, images, geojson) are defined here.
-- Each layer has:
-  - `id`, `name`, `url`, `opacity`, `visible`, `layerType`, `showInControl`, etc.
-- Overlays can be toggled and have their opacity set via URL or config.
 
 ### 3. Map Initialization
 - `initMap()` orchestrates map creation, layer addition, controls, and UI setup.
@@ -113,10 +116,16 @@ const LAYER_CONFIG = {
 - All overlays appear in a single `L.control.layers` panel.
 - Opacity sliders are dynamically generated and update the map in real time.
 
-### 6. Custom Controls
+### 6. Timeline Slider (Year-Based Filtering)
+- If multiple visible overlays have a `year`, a timeline slider appears at the bottom of the map.
+- Moving the slider fades between years, updating layer opacity and syncing the control panel.
+- If only one visible layer with a year, the slider is hidden.
+- The slider only uses layers currently visible (e.g., filtered by URL).
+
+### 7. Custom Controls
 - Includes a reset zoom button and user geolocation via `leaflet-locatecontrol`.
 
-### 7. Utility Functions
+### 8. Utility Functions
 - Fetch JSON, filter layers by ID, log all layer IDs, etc.
 
 ---
@@ -138,6 +147,23 @@ map.html
 map.html?layers=1940
 ```
 
+### Add a New Raster Layer
+```js
+LAYER_CONFIG["RASTER_2000"] = {
+  id: "2000",
+  type: "overlay",
+  name: "2000",
+  year: "2000",
+  url: BASE_URL + "COG_2000.tif",
+  opacity: 0.7,
+  slider: true,
+  visible: true,
+  layerType: "georaster",
+  extraOptions: { resolution: 256 },
+  showInControl: true
+};
+```
+
 ---
 
 ## Troubleshooting & FAQ
@@ -146,6 +172,7 @@ map.html?layers=1940
 - **COG/GeoTIFF not displaying:** Ensure your server supports HTTP Range requests and CORS.
 - **Layer not visible:** Check the `layers` URL param and `LAYER_CONFIG` for correct `name` and `visible` settings.
 - **Opacity not updating:** Make sure the layer is listed in the URL and the value is a valid number between 0 and 1.
+- **Timeline slider not showing:** Ensure at least two visible overlays have a `year` property.
 - **Map not centering/zooming:** Check the `center` and `zoom` URL params for valid values.
 
 ### Debugging Tips
