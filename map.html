@@ -23,10 +23,14 @@
 <div class="folium-map" id="map"></div>
 
 <!-- Include Leaflet, Bootstrap, and Bing Maps JS -->
-<script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-<script src="https://unpkg.com/georaster"></script>
-<script src="https://unpkg.com/georaster-layer-for-leaflet" type="module"></script>
+<!-- <script src="https://unpkg.com/georaster"></script> -->
+<script src="https://unpkg.com/georaster@1.7.0-0/dist/georaster.browser.bundle.min.js"></script>
+<!-- versions > 3.10.0 do not visualize alpa in COG correctly-->
+<script src="https://unpkg.com/georaster-layer-for-leaflet@3.10.0/dist/v3/webpack/bundle/georaster-layer-for-leaflet.min.js"></script>
+
+
 <!-- <script src="georaster-layer-for-leaflet.min.js"> </script> -->
 
 <!-- Add the Bing plugin script -->

@@ -1,6 +1,6 @@
 // Constants and configuration for the map and layers
 // automatic URL detection for local or production environment
-const BASE_URL = window.location.hostname === "localhost" || window.location.hostname === "0.0.0.0"
+const BASE_URL = window.location.hostname === "127.0.0.1"
   ? "http://0.0.0.0:44000/"
   : "https://kidpixo.github.io/leaflet-test/";
 
@@ -44,7 +44,7 @@ const LAYER_CONFIG = {
         type: "overlay",
         name: "1884",
         year: "1884",
-        url: BASE_URL + "COG_1884.tif",
+        url: BASE_URL + "COG_1884.jpeg-band.tif",
         opacity: 0.7,
         slider: true,
         visible: true,
@@ -84,7 +84,7 @@ const LAYER_CONFIG = {
         type: "overlay",
         name: "1970",
         year: "1970",
-        url: BASE_URL + "COG_1970.tif",
+        url: BASE_URL + "COG_1970.jpeg-band.tif",
         opacity: 0.7,
         slider: true,
         visible: true,
