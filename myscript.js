@@ -378,7 +378,7 @@ function createTimelineSlider() {
     // Create slider container
     const sliderContainer = document.createElement('div');
     sliderContainer.id = 'timeline-slider-container';
-    sliderContainer.className = 'position-absolute w-100 px-4 pb-2';
+    sliderContainer.className = 'w-100 px-4 pb-2';
     sliderContainer.style.bottom = '60px'; // Move slider higher above credits (was '0')
     sliderContainer.style.left = '0';
     sliderContainer.style.zIndex = '1000';
@@ -386,24 +386,14 @@ function createTimelineSlider() {
     sliderContainer.style.background = 'none';
     sliderContainer.style.textAlign = 'center';
 
-    // Create slider input
-    const slider = document.createElement('input');
-    slider.type = 'range';
-    slider.id = 'timeline-slider';
-    slider.className = 'form-range'; // Bootstrap style
-    slider.min = 0;
-    slider.max = years.length - 1;
-    slider.step = '0.01'; // Smooth fade
-    slider.value = 0;
-    slider.style.width = '60%';
-    slider.style.margin = '0 auto';
-
     // Create year labels
     const labelRow = document.createElement('div');
-    labelRow.className = 'd-flex justify-content-between w-60 mx-auto';
-    labelRow.style.width = '60%';
+    labelRow.className = 'd-flex justify-content-between mx-auto';
     labelRow.style.position = 'relative';
     labelRow.style.zIndex = '1001';
+    labelRow.style.marginBottom = '4px';
+    labelRow.style.width = '100%'; // Match slider width
+    labelRow.style.maxWidth = '100%';
     years.forEach((year, i) => {
         const lbl = document.createElement('span');
         lbl.innerText = year;
@@ -417,8 +407,157 @@ function createTimelineSlider() {
     });
 
     sliderContainer.appendChild(labelRow);
+
+    // Create slider input
+    const slider = document.createElement('input');
+    slider.type = 'range';
+    slider.id = 'timeline-slider';
+    slider.className = 'form-range'; // Bootstrap style
+    slider.min = 0;
+    slider.max = years.length - 1;
+    slider.step = '0.01'; // Smooth fade
+    slider.value = 0;
+    slider.style.margin = '0 auto';
+    slider.style.width = '100%'; // Match labelRow width
     sliderContainer.appendChild(slider);
+
+    // Create play button
+    const playBtn = document.createElement('button');
+    playBtn.id = 'timeline-play-btn';
+    playBtn.className = 'leaflet-control leaflet-bar';
+    playBtn.innerHTML = '&#9654;'; // Unicode play symbol ▶
+    playBtn.title = 'Play timeline';
+    playBtn.style.fontSize = '1.5em';
+    playBtn.style.verticalAlign = 'middle';
+    playBtn.style.cursor = 'pointer';
+    playBtn.style.marginRight = '16px';
+
+    // Single/Loop switch
+    const singleLoopLabel = document.createElement('label');
+    singleLoopLabel.className = 'leaflet-control form-check form-switch mb-2';
+    singleLoopLabel.style.display = 'flex';
+    singleLoopLabel.style.alignItems = 'center';
+    singleLoopLabel.style.fontSize = '1.25em';
+    singleLoopLabel.style.color = '#222';
+    singleLoopLabel.style.fontWeight = 'bold';
+    singleLoopLabel.style.textShadow = '0 0 8px #fff, 0 0 2px #fff, 0 0 1px #fff';
+    singleLoopLabel.style.marginRight = '16px';
+    singleLoopLabel.innerHTML = `<input class="form-check-input" type="checkbox" id="timeline-switch-loop" checked> loop  `;
+    
+    // Slow/Fast switch
+    const slowFastLabel = document.createElement('label');
+    slowFastLabel.className = ' leaflet-control form-check form-switch';
+    slowFastLabel.style.display = 'flex';
+    slowFastLabel.style.alignItems = 'center';
+    slowFastLabel.style.fontSize = '1.25em';
+    slowFastLabel.style.color = '#222';
+    slowFastLabel.style.fontWeight = 'bold';
+    slowFastLabel.style.textShadow = '0 0 8px #fff, 0 0 2px #fff, 0 0 1px #fff';
+    slowFastLabel.innerHTML = `<input class="form-check-input" type="checkbox" id="timeline-switch-speed"> fast `;
+
+    // Reverse switch
+    const reverseLabel = document.createElement('label');
+    reverseLabel.className = 'leaflet-control form-check form-switch';
+    reverseLabel.style.display = 'flex';
+    reverseLabel.style.alignItems = 'center';
+    reverseLabel.style.fontSize = '1.25em';
+    reverseLabel.style.color = '#222';
+    reverseLabel.style.fontWeight = 'bold';
+    reverseLabel.style.textShadow = '0 0 8px #fff, 0 0 2px #fff, 0 0 1px #fff';
+    reverseLabel.innerHTML = `<input class="form-check-input" type="checkbox" id="timeline-switch-reverse"> rev`;
+
+    // Controls row: play button and switches in a row below the slider
+    const controlsRow = document.createElement('div');
+    controlsRow.style.display = 'flex';
+    controlsRow.style.flexDirection = 'row';
+    controlsRow.style.justifyContent = 'center';
+    controlsRow.style.alignItems = 'center';
+    controlsRow.style.width = '60%';
+    controlsRow.style.margin = '8px auto 0 auto';
+
+    controlsRow.appendChild(playBtn);
+    controlsRow.appendChild(singleLoopLabel);
+    controlsRow.appendChild(slowFastLabel);
+    controlsRow.appendChild(reverseLabel);
+    sliderContainer.appendChild(controlsRow);
     document.body.appendChild(sliderContainer);
+
+    // --- Collapsible Leaflet Control Wrapper ---
+    const collapsibleControl = document.createElement('div');
+    collapsibleControl.className = 'leaflet-control leaflet-bar';
+    collapsibleControl.style.position = 'absolute';
+    collapsibleControl.style.left = '50%';
+    // collapsibleControl.style.transform = 'translateX(-50%)';
+    collapsibleControl.style.bottom = '60px';
+    collapsibleControl.style.textAlign = 'center';
+    collapsibleControl.style.pointerEvents = 'auto';
+    collapsibleControl.style.width = '95vw'; // 95% of viewport width
+    collapsibleControl.style.maxWidth = '';
+    collapsibleControl.style.minWidth = '';
+    collapsibleControl.style.border = '1px solid #bbb';
+    collapsibleControl.style.borderRadius = '8px';
+    collapsibleControl.style.background = 'rgba(255,255,255,0.3)';
+    collapsibleControl.style.display = 'flex';
+    collapsibleControl.style.flexDirection = 'row';
+    collapsibleControl.style.alignItems = 'stretch';
+    // Place the control at the bottom center
+    collapsibleControl.style.transform = 'translateX(-50%)';
+    collapsibleControl.style.zIndex = '1003';
+
+ 
+    sliderContainer.style.width = '100%';
+    sliderContainer.style.display = 'flex';
+    sliderContainer.style.flexDirection = 'column';
+    sliderContainer.style.justifyContent = 'center';
+    sliderContainer.style.alignItems = 'center';
+    sliderContainer.style.background = 'none';
+    sliderContainer.style.borderRadius = '8px';
+
+    // Toggle button (collapse)
+    const toggleBtn = document.createElement('button');
+    toggleBtn.className = 'leaflet-bar leaflet-control'; // Use Leaflet's button style
+    toggleBtn.style.border = '';
+    toggleBtn.style.background = '';
+    toggleBtn.style.fontWeight = 'bold';
+    // toggleBtn.style.fontSize = '1.5em';
+    toggleBtn.style.cursor = 'pointer';
+    // toggleBtn.style.padding = '8px 16px';
+    toggleBtn.style.height = '100%';
+    toggleBtn.style.display = 'flex';
+    toggleBtn.style.alignItems = 'center';
+    toggleBtn.style.justifyContent = 'center';
+    toggleBtn.innerHTML = '&#8942;'; // ⋮ vertical dots for expanded
+
+    // Place button to left
+    collapsibleControl.appendChild(toggleBtn);
+    collapsibleControl.appendChild(sliderContainer);
+
+    // Hide sliderContainer initially
+    sliderContainer.style.display = '';
+
+    // Toggle logic
+    let collapsed = false;
+    toggleBtn.addEventListener('click', function() {
+        collapsed = !collapsed;
+        if (collapsed) {
+            sliderContainer.style.display = 'none';
+            collapsibleControl.style.width = 'auto';
+            collapsibleControl.style.left = '20px'; // Collapse to left side
+            collapsibleControl.style.right = '';
+            collapsibleControl.style.transform = '';
+            collapsibleControl.style.justifyContent = 'flex-start';
+        } else {
+            sliderContainer.style.display = 'flex';
+            collapsibleControl.style.width = '95vw';
+            collapsibleControl.style.left = '50%';
+            collapsibleControl.style.right = '';
+            collapsibleControl.style.transform = 'translateX(-50%)';
+            collapsibleControl.style.justifyContent = '';
+        }
+        toggleBtn.innerHTML = collapsed ? '&#9776;' : '&#8942;'; // ☰ for collapsed, ⋮ for expanded
+    });
+
+   document.body.appendChild(collapsibleControl);
 
     // Handler for slider movement
     slider.addEventListener('input', function(e) {
@@ -447,6 +586,87 @@ function createTimelineSlider() {
             // Ensure layer is visible in control
             const checkbox = document.querySelector(`input.leaflet-control-layers-selector[type='checkbox'][data-layerid='${LAYER_CONFIG[layerKey].id}']`);
             if (checkbox && !checkbox.checked) checkbox.checked = true;
+        });
+    });
+
+    // --- PLAY LOGIC ---
+    let playing = false;
+    let playInterval = null;
+    let currentStep = 0;
+    const stepsPerLabel = 20; // smoothness between labels
+    const totalSteps = (years.length - 1) * stepsPerLabel;
+    const baseStepTime = 3000 / stepsPerLabel; // 1s per label
+    const fastStepTime = baseStepTime / 4; // 4x speed
+
+    function getDirection() {
+        return reverseLabel.querySelector('input').checked ? -1 : 1;
+    }
+    function getLoop() {
+        return singleLoopLabel.querySelector('input').checked;
+    }
+    function getSpeed() {
+        return slowFastLabel.querySelector('input').checked ? fastStepTime : baseStepTime;
+    }
+    function setPlaying(state) {
+        playing = state;
+        playBtn.innerHTML = state ? '&#9632;' : '&#9654;'; // ■ for stop, ▶ for play
+    }
+    function playTimeline() {
+        console.log('playTimeline called'); // Debug log
+        if (playing) return;
+        setPlaying(true);
+        let direction = getDirection();
+        let loop = getLoop();
+        let speed = getSpeed();
+        let min = 0, max = totalSteps;
+        let val = Math.round(parseFloat(slider.value) * stepsPerLabel);
+        currentStep = val;
+        function step() {
+            // console.log('step called, playing:', playing); // Debug log
+            direction = getDirection();
+            loop = getLoop();
+            speed = getSpeed();
+            // Clamp currentStep before increment
+            if (currentStep < min) currentStep = min;
+            if (currentStep > max) currentStep = max;
+            // console.log('currentStep:', currentStep, 'min:', min, 'max:', max); // Debug log
+            slider.value = (currentStep / stepsPerLabel).toFixed(2);
+            // console.log('playTimeline step, slider.value:', slider.value); // Debug log
+            slider.dispatchEvent(new Event('input'));
+            currentStep += direction;
+            // Now check bounds after increment
+            if (currentStep < min || currentStep > max) {
+                // console.log('Out of bounds, stopping or looping'); // Debug log
+                if (loop) {
+                    currentStep = direction === -1 ? max : min;
+                } else {
+                    stopTimeline();
+                    return;
+                }
+            }
+            playInterval = setTimeout(step, speed);
+        }
+        playInterval = setTimeout(step, speed);
+    }
+    function stopTimeline() {
+        setPlaying(false);
+        if (playInterval) clearTimeout(playInterval);
+        playInterval = null;
+    }
+    playBtn.addEventListener('click', function() {
+        if (playing) {
+            stopTimeline();
+        } else {
+            playTimeline();
+        }
+    });
+    // If any switch changes, update speed/direction immediately
+    [singleLoopLabel, slowFastLabel, reverseLabel].forEach(label => {
+        label.querySelector('input').addEventListener('change', () => {
+            if (playing) {
+                stopTimeline();
+                playTimeline();
+            }
         });
     });
 }
