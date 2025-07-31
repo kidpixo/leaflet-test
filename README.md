@@ -123,6 +123,66 @@ const LAYER_CONFIG = {
 - `photos_origin.geojson` — Example photo marker data.
 - `COG_*.tif` — Cloud-Optimized GeoTIFF raster overlays.
 
+## Project Structure
+
+```
+leaflet-test/
+├── Dockerfile
+├── Makefile
+├── environment_server.yml
+├── requirements_server.txt
+├── map.html
+├── myscript.js
+├── rangeserver.py
+├── scripts/
+│   ├── convert_photos_coords.py
+│   ├── validate_geojson.py
+├── maps_data/
+│   ├── geojson_schema.json
+│   ├── photos_fov.geojson
+│   ├── photos_origin.geojson
+├── photos/
+│   ├── Photos.csv
+│   └── ...
+```
+
+## Docker & Makefile Usage
+
+### Build the Docker image
+```sh
+make build
+```
+
+### Run the server in a container (with live code from your project)
+```sh
+make run-docker
+```
+
+### Run the server with system Python
+```sh
+make run-system
+```
+
+### Run the server with conda
+```sh
+make run-conda
+```
+
+### Run the conversion script in a container
+```sh
+make convert-docker
+```
+
+### Run the conversion script with system Python
+```sh
+make convert-system
+```
+
+### Run the conversion script with conda
+```sh
+make convert-conda
+```
+
 ---
 
 ## myscript.js: Structure & Deep Dive

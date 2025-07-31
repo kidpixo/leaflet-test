@@ -1,8 +1,8 @@
 // Constants and configuration for the map and layers
 // automatic URL detection for local or production environment
 const BASE_URL = window.location.hostname === "127.0.0.1"
-  ? "http://0.0.0.0:44000/"
-  : "https://kidpixo.github.io/leaflet-test/";
+  ? "http://0.0.0.0:44000/maps_data/"
+  : "https://kidpixo.github.io/leaflet-test/maps_data/";
 
 // Layer configuration: defines all options for each layer
 const LAYER_CONFIG = {
@@ -265,45 +265,18 @@ async function addRasterLayers() {
     }
 }
 
-// Add photo origin points as a GeoJSON layer
-function addPhotoLayers() {
-    const promises = [];
-    for (const key in LAYER_CONFIG) {
-        const cfg = LAYER_CONFIG[key];
-        if (!cfg.visible || cfg.layerType !== 'geojson') continue;
-        const promise = new Promise((resolve, reject) => {
-            getJSON(cfg.url, function(geojson) {
-                layers[cfg.id] = L.geoJSON(geojson, {
-                    onEachFeature: function(feature, layer) {
-                        var text = feature.properties.text.replace(/['"]+/g, '');
-                        var filename = feature.properties.filename;
-                        var popupContent_pre = '<div>' +
-                            '<h2>' + text + '</h2>' +
-                            '<a href="'+ BASE_URL + 'photos/'+ filename + '"  target="_blank" rel="noopener noreferrer">original';
-                        var popupContent_show = filename.includes('.webm') ?
-                            '<video controls id="markers_popup_photos" src="'+ BASE_URL + 'photos/thumbnail_'+ filename + '" alt="' + filename + '"></video>' :
-                            '<img id="markers_popup_photos" src="'+ BASE_URL + 'photos/thumbnail_'+ filename + '" alt="' + filename + '">';
-                        var popupContent_post = '</a></div>';
-                        var popupContent = popupContent_pre + popupContent_show + popupContent_post;
-                        layer.bindPopup(popupContent, {maxWidth: "auto"});
-                    }
-                }).addTo(layers.map);
-                resolve();
-            });
-        });
-        promises.push(promise);
-    }
-    return Promise.all(promises);
-}
-
 // Add PNG image overlay (underground map)
 function addImageOverlays() {
     for (const key in LAYER_CONFIG) {
         const cfg = LAYER_CONFIG[key];
         if (!cfg.visible || cfg.layerType !== 'image') continue;
-        layers[cfg.id] = L.imageOverlay(cfg.url, cfg.imageBounds, { opacity: cfg.opacity ?? 1 });
-        layers[cfg.id].options['layer_id'] = cfg.id;
-        layers[cfg.id].addTo(layers.map);
+        try {
+            layers[cfg.id] = L.imageOverlay(cfg.url, cfg.imageBounds, { opacity: cfg.opacity ?? 1 });
+            layers[cfg.id].options['layer_id'] = cfg.id;
+            layers[cfg.id].addTo(layers.map);
+        } catch (error) {
+            console.error(`Error adding image overlay for ${cfg.id}:`, error);
+        }
     }
 }
 
@@ -327,6 +300,9 @@ function addLayerControls() {
                 }
             }
         }
+        if (layers.layerControl) {
+            layers.map.removeControl(layers.layerControl);
+        }
         layers.layerControl = L.control.layers(baseMaps, overlayMaps, {"autoZIndex": true, "collapsed": false, "position": "topright"}).addTo(layers.map);
     }, 500);
 }
@@ -340,14 +316,14 @@ function setupOpacityControls() {
             const el = document.querySelector(`#opacity-slider-${cfg.id}`);
             const layer = layers[cfg.id];
             if (el && layer) {
-                el.addEventListener('input', function(e) {
-                    var opacity = e.target.value;
+                el.addEventListener('input', debounce((e) => {
+                    const opacity = e.target.value;
                     if (cfg.id === 'fov') {
                         layer.setStyle(new_style(opacity));
                     } else {
                         layer.setOpacity(opacity);
                     }
-                });
+                }, 50));
             }
         }
     }, 700);
@@ -355,22 +331,55 @@ function setupOpacityControls() {
 
 // Add a custom control (reset zoom button)
 function setupCustomControls() {
-    var control = new L.Control({ position: 'topleft' });
+    const control = new L.Control({ position: 'topleft' });
     control.onAdd = function(map) {
-        var azoom = L.DomUtil.create('a', 'mt-0');
-        azoom.innerHTML = '<div class="leaflet-control-zoom leaflet-bar leaflet-control mt-0 ms-0"><a class="leaflet-control-reset-zoom" title="Reset zoom" role="button" aria-label="Reset zoom">' +
-            '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-house" viewBox="0 0 16 16">' +
-            '<path fill-rule="evenodd" d="M2 13.5V7h1v6.5a.5.5 0 0 0 .5.5h9a.5.5 0 0 0 .5-.5V7h1v6.5a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 2 13.5zm11-11V6l-2-2V2.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5z"/>' +
-            '<path fill-rule="evenodd" d="M7.293 1.5a1 1 0 0 1 1.414 0l6.647 6.646a.5.5 0 0 1-.708.708L8 2.207 1.354 8.854a.5.5 0 1 1-.708-.708L7.293 1.5z"/>' +
-            '</svg></a></div>';
+        const azoom = L.DomUtil.create('a', 'mt-0');
+        azoom.innerHTML = `<div class="leaflet-control-zoom leaflet-bar leaflet-control mt-0 ms-0"><a class="leaflet-control-reset-zoom" title="Reset zoom" role="button" aria-label="Reset zoom">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-house" viewBox="0 0 16 16">
+            <path fill-rule="evenodd" d="M2 13.5V7h1v6.5a.5.5 0 0 0 .5.5h9a.5.5 0 0 0 .5-.5V7h1v6.5a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 2 13.5zm11-11V6l-2-2V2.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5z"/>
+            <path fill-rule="evenodd" d="M7.293 1.5a1 1 0 0 1 1.414 0l6.647 6.646a.5.5 0 0 1-.708.708L8 2.207 1.354 8.854a.5.5 0 1 1-.708-.708L7.293 1.5z"/>
+            </svg></a></div>`;
         L.DomEvent
             .disableClickPropagation(azoom)
-            .addListener(azoom, 'click', function() {
+            .on(azoom, 'click', () => {
                 layers.map.setView(layers.map.options.center, layers.map.options.zoom);
-            }, azoom);
+            });
         return azoom;
     };
     control.addTo(layers.map);
+}
+
+// Add photo origin points as a GeoJSON layer
+async function addPhotoLayers() {
+    const promises = [];
+    for (const key in LAYER_CONFIG) {
+        const cfg = LAYER_CONFIG[key];
+        if (!cfg.visible || cfg.layerType !== 'geojson') continue;
+        const promise = new Promise((resolve, reject) => {
+            getJSON(cfg.url, (geojson) => {
+                try {
+                    layers[cfg.id] = L.geoJSON(geojson, {
+                        onEachFeature: (feature, layer) => {
+                            const text = feature.properties.text.replace(/['"]+/g, '');
+                            const filename = feature.properties.filename;
+                            const popupContent = `<div><h2>${text}</h2><a href="${BASE_URL}photos/${filename}" target="_blank" rel="noopener noreferrer">original` +
+                                (filename.includes('.webm')
+                                    ? `<video controls id="markers_popup_photos" src="${BASE_URL}photos/thumbnail_${filename}" alt="${filename}"></video>`
+                                    : `<img id="markers_popup_photos" src="${BASE_URL}photos/thumbnail_${filename}" alt="${filename}">`) +
+                                '</a></div>';
+                            layer.bindPopup(popupContent, {maxWidth: "auto"});
+                        }
+                    }).addTo(layers.map);
+                    resolve();
+                } catch (error) {
+                    console.error(`Error adding photo layer for ${cfg.id}:`, error);
+                    reject(error);
+                }
+            });
+        });
+        promises.push(promise);
+    }
+    return Promise.all(promises);
 }
 
 // --- Timeline Slider ---
@@ -567,8 +576,8 @@ function createTimelineSlider() {
 
    document.body.appendChild(collapsibleControl);
 
-    // Handler for slider movement
-    slider.addEventListener('input', function(e) {
+    // Handler for slider movement (timeline slider)
+    slider.addEventListener('input', debounce(function(e) {
         const val = parseFloat(e.target.value);
         // Find nearest years
         const i = Math.floor(val);
@@ -595,7 +604,7 @@ function createTimelineSlider() {
             const checkbox = document.querySelector(`input.leaflet-control-layers-selector[type='checkbox'][data-layerid='${LAYER_CONFIG[layerKey].id}']`);
             if (checkbox && !checkbox.checked) checkbox.checked = true;
         });
-    });
+    }, 50));
 
     // --- PLAY LOGIC ---
     let playing = false;
@@ -694,8 +703,17 @@ function patchLayerControlCheckboxes() {
     }, 1000);
 }
 
+// Utility: debounce function for performance
+const debounce = (func, wait) => {
+    let timeout;
+    return (...args) => {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func.apply(this, args), wait);
+    };
+};
+
 // Utility: fetch JSON data from a URL
-function getJSON(url, cb) {
+const getJSON = (url, cb) => {
     fetch(url)
         .then(response => response.json())
         .then(result => cb(result))
@@ -703,9 +721,7 @@ function getJSON(url, cb) {
 }
 
 // Utility: return a style object with custom fill opacity
-const new_style = function(opacity) {
-    return { "fillOpacity": opacity };
-};
+const new_style = (opacity) => ({ "fillOpacity": opacity });
 
 // Utility: find a layer by its custom layer_id
 function filter_layer_id(layer_id) {
