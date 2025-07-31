@@ -1,5 +1,41 @@
 # Leaflet Historical Map Viewer: Developer Documentation
 
+## Prerequisites
+
+- For development and serving COG/GeoTIFF files locally, you need Python 3.x.
+- Required Python package: `RangeHTTPServer`.
+- No Node.js or npm is required for basic usage or GitHub Pages deployment. JavaScript libraries are loaded via CDN in `map.html`.
+
+## Quick Start
+
+1. **Install Python requirements**
+
+   Using pip:
+   ```sh
+   pip install RangeHTTPServer
+   ```
+   Or with conda:
+   ```sh
+   conda install -c conda-forge rangehttpserver
+   ```
+
+2. **Start the local server**
+
+   ```sh
+   python rangeserver.py
+   # Or specify a port:
+   python rangeserver.py 44000
+   ```
+
+3. **Open the demo**
+
+   Open your browser at:
+   ```
+   http://localhost:44000/map.html
+   ```
+
+---
+
 ## Problem-First Approach
 
 ### The Problem

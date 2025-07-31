@@ -1,0 +1,21 @@
+{
+  "name": "leaflet-test",
+  "version": "1.0.0",
+  "description": "Mappe antiche di Piedimonte con Leaflet.js",
+  "main": "myscript.js",
+  "scripts": {
+    "start": "echo 'Open map.html in your browser or use a static server.'"
+  },
+  "dependencies": {
+    "leaflet": "^1.9.4",
+    "bootstrap": "^5.2.2",
+    "@fortawesome/fontawesome-free": "^6.2.0",
+    "jquery": "^3.6.0",
+    "georaster": "^1.7.0-0",
+    "georaster-layer-for-leaflet": "^3.10.0",
+    "leaflet.locatecontrol": "^0.79.0"
+  },
+  "keywords": ["leaflet", "maps", "piedimonte", "static", "gh-pages"],
+  "author": "",
+  "license": "MIT"
+}

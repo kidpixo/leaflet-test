@@ -32,7 +32,7 @@ const LAYER_CONFIG = {
         type: "overlay",
         name: "Esri",
         url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
-        attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community',
+        attribution: 'Powered by [Esri](https://www.esri.com)',
         opacity: 1.0,
         slider: true,
         visible: true,
@@ -187,6 +187,14 @@ function createMap() {
         preferCanvas: false,
     });
     L.control.locate().addTo(layers.map); // Add geolocate user button
+
+    // Add right-click context menu to show coordinates in a popup
+    layers.map.on("contextmenu", function (event) {
+        L.popup()
+            .setLatLng(event.latlng)
+            .setContent("Coordinates:<br>" + event.latlng.lat.toFixed(6) + ", " + event.latlng.lng.toFixed(6))
+            .openOn(layers.map);
+    });
 }
 
 // Add base map layers: OSM, Bing, Esri
