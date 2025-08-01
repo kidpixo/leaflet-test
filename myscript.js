@@ -395,7 +395,7 @@ function createTimelineSlider() {
     // Create slider container
     const sliderContainer = document.createElement('div');
     sliderContainer.id = 'timeline-slider-container';
-    sliderContainer.className = 'w-100 px-4 pb-2';
+    sliderContainer.className = 'w-100 px-4 pb-2 '; //leaflet-control leaflet-bar'; // Leaflet style for main container
     sliderContainer.style.bottom = '60px'; // Move slider higher above credits (was '0')
     sliderContainer.style.left = '0';
     sliderContainer.style.zIndex = '1000';
@@ -420,7 +420,7 @@ function createTimelineSlider() {
         lbl.style.textShadow = '0 0 8px #fff, 0 0 2px #fff, 0 0 1px #fff'; // White outer glow for readability
         lbl.style.padding = '2px 6px';
         lbl.style.borderRadius = '4px';
-        labelRow.appendChild(lbl);
+    labelRow.appendChild(lbl);
     });
 
     sliderContainer.appendChild(labelRow);
@@ -441,7 +441,7 @@ function createTimelineSlider() {
     // Create play button
     const playBtn = document.createElement('button');
     playBtn.id = 'timeline-play-btn';
-    playBtn.className = 'leaflet-control leaflet-bar';
+    playBtn.className = 'leaflet-bar-part leaflet-control'; // Leaflet style for button
     playBtn.innerHTML = '&#9654;'; // Unicode play symbol ▶
     playBtn.title = 'Play timeline';
     playBtn.style.fontSize = '1.5em';
@@ -532,7 +532,7 @@ function createTimelineSlider() {
 
     // Toggle button (collapse)
     const toggleBtn = document.createElement('button');
-    toggleBtn.className = 'leaflet-bar leaflet-control'; // Use Leaflet's button style
+    toggleBtn.className = 'leaflet-bar-part leaflet-control'; // Leaflet style for button
     toggleBtn.style.border = '';
     toggleBtn.style.background = '';
     toggleBtn.style.fontWeight = 'bold';
