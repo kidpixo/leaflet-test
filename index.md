@@ -63,11 +63,10 @@ L'[aerofotogrammetria del ~1970](map.html?layers=esri:1,1970:0.8&zoom=17&center=
 
 [egg-book]: https://drive.google.com/file/d/1h53BRzBEh_saqBUhcvaPWc-PPpT_DO9n/view?usp=drive_link
 
-[Top](#top)
-
 ---
 
 ## <a id="english"></a>Ancient Maps of Piedimonte
+\[[Top](#top)\]
 
 I am pursuing as a hobby a project to record ancient maps of [Piedimonte Matese](https://en.wikipedia.org/wiki/Piedimonte_Matese), my hometown,, especially related to the old Cotonificio, now demolished.
 
@@ -126,11 +125,10 @@ The [aerial photogrammetry of ~1970](map.html?layers=esri:1,1970:0.8&zoom=17&cen
 
 [egg-book]: https://drive.google.com/file/d/1h53BRzBEh_saqBUhcvaPWc-PPpT_DO9n/view?usp=drive_link
 
-[Top](#top)
-
 ---
 
 ## <a id="german"></a>Alte Karten von Piedimonte
+\[[Top](#top)\]
 
 Ich verfolge als Hobby ein Projekt zur Dokumentation alter Karten von [Piedimonte Matese](https://de.wikipedia.org/wiki/Piedimonte_Matese), meine Heimatstadt, insbesondere im Zusammenhang mit der inzwischen abgerissenen alten Baumwollspinnerei.
 
@@ -188,5 +186,4 @@ Die [Luftbildphotogrammetrie von ~1970](map.html?layers=esri:1,1970:0.8&zoom=17&
 [^egg-book-footnote]: Das Buch wurde digitalisiert und ist hier verfügbar, mit Zustimmung der Autoren, die ich zu kontaktieren versuche. Die Autoren der jeweiligen Kapitel behalten alle Rechte.
 
 [egg-book]: https://drive.google.com/file/d/1h53BRzBEh_saqBUhcvaPWc-PPpT_DO9n/view?usp=drive_link
-
-[Top](#top)
+\[[Top](#top)\]
