@@ -298,3 +298,62 @@ LAYER_CONFIG["RASTER_2000"] = {
 - [RangeHTTPServer](https://github.com/danvk/RangeHTTPServer)
 - [leaflet-locatecontrol](https://github.com/domoritz/leaflet-locatecontrol)
 - [Contributors](https://github.com/kidpixo/leaflet-test/graphs/contributors)
+
+---
+
+## Layer Configuration: Structure & Overlay Order
+
+#### How Overlay Order Works
+- The order of overlays in the map and in the layer control panel is determined by the order of keys in the `LAYER_CONFIG` object in `myscript.js`.
+- When building the overlay list for `L.control.layers`, overlays are added in the order they appear in `LAYER_CONFIG`.
+- To change the stacking or control order, simply rearrange the overlay entries in `LAYER_CONFIG`.
+- Leaflet will respect this order both at map creation and when toggling overlays on/off via the control panel.
+
+#### LAYER_CONFIG: Key Reference
+Each entry in `LAYER_CONFIG` defines a map layer. The following keys are supported:
+
+| Key            | Required | Type      | Description                                                                 |
+|----------------|----------|-----------|-----------------------------------------------------------------------------|
+| `id`           | Yes      | String    | Unique identifier for the layer. Used for internal reference.               |
+| `type`         | Yes      | String    | Layer type: `basemap` or `overlay`.                                        |
+| `name`         | Yes      | String    | Display name for the layer (shown in controls and popups).                  |
+| `year`         | No       | String    | Year for timeline slider (only for overlays with historical data).          |
+| `url`          | Yes      | String    | Data source URL (tile, raster, image, or geojson).                          |
+| `opacity`      | Yes      | Number    | Initial opacity (0-1). Can be changed via slider or URL param.              |
+| `visible`      | Yes      | Boolean   | Whether the layer is shown by default.                                      |
+| `layerType`    | Yes      | String    | Type of Leaflet layer: `tile`, `georaster`, `image`, `geojson`, `bing`.     |
+| `showInControl`| No       | Boolean   | If false, layer is hidden from the control panel. Default: true.            |
+| `slider`       | No       | Boolean   | If true, an opacity slider is shown in the control panel.                   |
+| `extraOptions` | No       | Object    | Additional options for the layer (e.g., resolution for rasters).            |
+| `grayscale`    | No       | Boolean   | If true, raster is rendered in grayscale.                                   |
+| `imageBounds`  | No       | Array     | Bounds for image overlays ([SW, NE] lat/lng pairs).                         |
+
+**Minimal required keys:** `id`, `type`, `name`, `url`, `opacity`, `visible`, `layerType`
+
+#### Example
+```js
+const LAYER_CONFIG = {
+  RASTER_1884: {
+    id: "1884",           // Unique layer ID
+    type: "overlay",      // Overlay type
+    name: "1884",         // Display name
+    year: "1884",         // Year (for timeline)
+    url: BASE_URL + "COG_1884.tif", // Data source
+    opacity: 0.7,          // Initial opacity
+    visible: true,         // Shown by default
+    layerType: "georaster", // Layer type
+    showInControl: true,   // Show in control panel
+    slider: true,          // Show opacity slider
+    extraOptions: { resolution: 256 }, // Additional options
+    grayscale: false       // Render in color
+  },
+  // ... more layers ...
+};
+```
+
+**To add or reorder overlays:**
+- Add new entries to `LAYER_CONFIG` in the desired order.
+- The order of keys determines the stacking and control panel order.
+- No need for a separate config array or zIndex unless you want dynamic reordering.
+
+---
