@@ -357,3 +357,26 @@ const LAYER_CONFIG = {
 - No need for a separate config array or zIndex unless you want dynamic reordering.
 
 ---
+
+## Technical Stack & Data Format
+
+### Visualization Technology
+- **Leaflet.js**: Main mapping library for interactive web maps.
+- **georaster-layer-for-leaflet**: Efficiently displays large raster datasets (COG/GeoTIFF) in the browser.
+- **Bootstrap**: Used for responsive UI elements and controls.
+- **GeoJSON**: For vector overlays and photo markers.
+- **RangeHTTPServer**: Python server supporting HTTP Range requests for COG streaming.
+
+### Data Format: COG (Cloud-Optimized GeoTIFF)
+- **COG** is a modern raster format designed for efficient access and streaming over HTTP.
+- Enables partial loading and fast visualization of large historical maps directly in the browser.
+- All raster overlays in this project use COG for performance and compatibility.
+- For more info: [Cloud-Optimized GeoTIFF](https://www.cogeo.org/)
+
+### Project Roadmap
+- This repository is an **experimental testbed** for the visualization workflow and technical integration.
+- A complete website documenting the entire process—from georeferencing to publishing—is in preparation.
+- The goal is to develop a **general framework** enabling less technical users to create and host historical map viewers on GitHub, with minimal setup.
+- Future versions will include step-by-step guides, automated tools, and a user-friendly interface for map creation and sharing.
+
+---
